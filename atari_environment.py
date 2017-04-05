@@ -50,7 +50,7 @@ class AtariEnvironment(object):
         1) Get image grayscale
         2) Rescale image
         """
-        return resize(rgb2gray(observation), (self.resized_width, self.resized_height))
+        return resize(rgb2gray(observation), (self.resized_width, self.resized_height), mode = 'constant')
 
     def step(self, action_index):
         """
