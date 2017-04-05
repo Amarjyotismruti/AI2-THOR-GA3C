@@ -37,7 +37,8 @@ class A3CAgent:
                  num_iterations, 
                  batch_size,
                  num_actions, 
-                 output_dir):
+                 output_dir,
+                 max_grad):
         self.model_name = model_name
         self.checkpoint_interval = checkpoint_interval
         self.summary_interval = summary_interval
@@ -51,6 +52,7 @@ class A3CAgent:
         self.batch_size = batch_size
         self.num_actions = num_actions
         self.output_dir = output_dir
+        self.max_grad = max_grad
 
         self.summary_save_path = self.summary_save_path % self.output_dir
         self.model_save_path = self.model_save_path % self.output_dir

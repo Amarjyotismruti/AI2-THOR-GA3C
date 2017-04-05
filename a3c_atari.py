@@ -3,7 +3,7 @@ import keras.backend as K
 from a3c import A3CAgent
 import gym
 from atari_environment import AtariEnvironment
-from utils import get_output_folder
+from utils import get_output_folder, mean_huber_loss
 
 flags = tf.app.flags
 flags.DEFINE_string('output', 'atari-v0', 'Name of the output folder')
@@ -54,7 +54,8 @@ def main(_):
 							FLAGS.num_iterations, 
 							FLAGS.batch_size, 
 							num_actions, 
-							output_dir)
+							output_dir, 
+							1)
 		graph_ops = a3cAgent.compile()
 		saver = tf.train.Saver()
 

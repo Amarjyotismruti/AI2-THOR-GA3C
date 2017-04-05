@@ -3,7 +3,8 @@ import keras.backend as K
 from a3c import A3CAgent
 import gym
 from cartpole_environment import CartPoleEnvironment
-from utils import get_output_folder
+from utils import get_output_folder, mean_huber_loss
+import numpy as np
 
 flags = tf.app.flags
 flags.DEFINE_string('output', 'atari-v0', 'Name of the output folder')
@@ -51,7 +52,8 @@ def main(_):
 							FLAGS.num_iterations, 
 							FLAGS.batch_size, 
 							num_actions, 
-							output_dir)
+							output_dir, 
+							np.inf)
 		graph_ops = a3cAgent.compile()
 		saver = tf.train.Saver()
 
