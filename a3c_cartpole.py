@@ -21,7 +21,7 @@ flags.DEFINE_integer('resized_height', 84, 'Scale screen to this height.')
 flags.DEFINE_float('gamma', 0.99, 'Reward discount rate.')
 flags.DEFINE_float('learning_rate', 0.001, 'Learning rate.')
 flags.DEFINE_integer('num_iterations', 100000, 'Number of training timesteps.')
-flags.DEFINE_integer('async_update ', 32, 'Asynchronous update frequency')
+flags.DEFINE_integer('async_update', 4, 'Asynchronous update frequency')
 FLAGS = flags.FLAGS
 
 def main(_):
