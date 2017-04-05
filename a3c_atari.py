@@ -3,8 +3,10 @@ import keras.backend as K
 from a3c import A3CAgent
 import gym
 from atari_environment import AtariEnvironment
+from utils import get_output_folder
 
 flags = tf.app.flags
+flags.DEFINE_string('output', 'atari-v0', 'Name of the output folder')
 flags.DEFINE_string('env', 'Breakout-v0', 'Name of the environment')
 flags.DEFINE_boolean('model', 'deep_Q_network', 'type of network')
 flags.DEFINE_boolean('testing', False, 'If true, run gym evaluation')
@@ -22,6 +24,8 @@ flags.DEFINE_integer('batch_size', 32, 'Size of batch to update network')
 FLAGS = flags.FLAGS
 
 def main(_):
+	output_dir = get_output_folder(FLAGS.output, FLAGS.env)
+
 	if FLAGS.testing:
 		FLAGS.num_concurrent = 1
 		
@@ -48,8 +52,9 @@ def main(_):
 							FLAGS.gamma, 
 							FLAGS.learning_rate, 
 							FLAGS.num_iterations, 
-							FLAGS.batch_size,
-							num_actions)
+							FLAGS.batch_size, 
+							num_actions, 
+							output_dir)
 		graph_ops = a3cAgent.compile()
 		saver = tf.train.Saver()
 
