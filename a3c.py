@@ -72,10 +72,17 @@ class A3CAgent:
         s, a, R, minimize, p_network, v_network = graph_ops
 
         # Unpack tensorboard summary stuff
-        r_summary_placeholder, update_ep_reward, val_summary_placeholder, update_ep_val, summary_op = summary_ops
+        r_summary_placeholder, \
+        update_ep_reward, \
+        val_summary_placeholder, \
+        update_ep_val, \
+        summary_op = summary_ops
 
         # Wrap env with AtariEnvironment helper class
-        env = AtariEnvironment(gym_env=env, resized_width=self.RESIZED_WIDTH, resized_height=self.RESIZED_HEIGHT, agent_history_length=self.AGENT_HISTORY_LENGTH)
+        env = AtariEnvironment(gym_env=env, \
+                               resized_width=self.RESIZED_WIDTH, \
+                               resized_height=self.RESIZED_HEIGHT, \
+                               agent_history_length=self.AGENT_HISTORY_LENGTH)
 
         time.sleep(5*num)
 
@@ -154,7 +161,14 @@ class A3CAgent:
 
     def compile(self):
         # Create shared global policy and value networks
-        s, p_network, v_network, p_params, v_params = build_policy_and_value_networks(num_actions=self.ACTIONS, agent_history_length=self.AGENT_HISTORY_LENGTH, resized_width=self.RESIZED_WIDTH, resized_height=self.RESIZED_HEIGHT)
+        s, \
+        p_network, \
+        v_network, \
+        p_params, \
+        v_params = build_policy_and_value_networks(num_actions=self.ACTIONS, \
+                                                   agent_history_length=self.AGENT_HISTORY_LENGTH, \
+                                                   resized_width=self.RESIZED_WIDTH, \
+                                                   resized_height=self.RESIZED_HEIGHT)
 
         # Shared global optimizer
         optimizer = tf.train.AdamOptimizer(self.LEARNING_RATE)
@@ -182,7 +196,11 @@ class A3CAgent:
         val_summary_placeholder = tf.placeholder("float")
         update_ep_val = ep_avg_v.assign(val_summary_placeholder)
         summary_op = tf.summary.merge_all()
-        return r_summary_placeholder, update_ep_reward, val_summary_placeholder, update_ep_val, summary_op
+        return r_summary_placeholder, \
+               update_ep_reward, \
+               val_summary_placeholder, \
+               update_ep_val, \
+               summary_op
 
     def train(self, session, graph_ops, saver):
         # Set up game environments (one per thread)
@@ -196,7 +214,13 @@ class A3CAgent:
         writer = tf.summary.FileWriter(self.SUMMARY_SAVE_PATH, session.graph)
 
         # Start NUM_CONCURRENT training threads
-        actor_learner_threads = [threading.Thread(target=self.actor_learner_thread, args=(thread_id, envs[thread_id], session, graph_ops, summary_ops, saver)) for thread_id in range(self.NUM_CONCURRENT)]
+        actor_learner_threads = [threading.Thread(target=self.actor_learner_thread, \
+                                                  args=(thread_id, \
+                                                        envs[thread_id], \
+                                                        session, \
+                                                        graph_ops, \
+                                                        summary_ops, \
+                                                        saver)) for thread_id in range(self.NUM_CONCURRENT)]
         for t in actor_learner_threads:
             t.start()
 
@@ -224,7 +248,10 @@ class A3CAgent:
         s, a_t, R_t, minimize, p_network, v_network = graph_ops
 
         # Wrap env with AtariEnvironment helper class
-        env = AtariEnvironment(gym_env=monitor_env, resized_width=self.RESIZED_WIDTH, resized_height=self.RESIZED_HEIGHT, agent_history_length=self.AGENT_HISTORY_LENGTH)
+        env = AtariEnvironment(gym_env=monitor_env, \
+                               resized_width=self.RESIZED_WIDTH, \
+                               resized_height=self.RESIZED_HEIGHT, \
+                               agent_history_length=self.AGENT_HISTORY_LENGTH)
 
         for i_episode in xrange(100):
             s_t = env.get_initial_state()
