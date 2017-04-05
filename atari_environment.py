@@ -84,3 +84,6 @@ class AtariEnvironment(Environment):
         self.state_buffer.append(x_t1)
 
         return s_t1, r_t, terminal, info
+
+    def render(self):
+        self.env.render()

@@ -230,7 +230,7 @@ class A3CAgent:
         while True:
             if self.show_training:
                 for env in envs:
-                    env.env.render()
+                    env.render()
             now = time.time()
             if now - last_summary_time > self.summary_interval:
                 summary_str = session.run(summary_op)
@@ -252,7 +252,7 @@ class A3CAgent:
             ep_reward = 0
             terminal = False
             while not terminal:
-                monitor_env.env.render()
+                monitor_env.render()
                 # Forward the deep q network, get Q(s,a) values
                 probs = p_network.eval(session = session, feed_dict = {s : [s_t]})[0]
                 action_index = self.sample_policy_action(self.num_actions, probs)
