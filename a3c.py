@@ -15,9 +15,6 @@ from a3c_model import build_policy_and_value_networks
 from keras import backend as K
 from atari_environment import AtariEnvironment
 
-# TRAINING = False
-TRAINING = True
-
 class A3CAgent:
     # Path params
     EXPERIMENT_NAME = "breakout_a3c"
@@ -267,19 +264,3 @@ class A3CAgent:
                 ep_reward += r_t
             print(ep_reward)
         monitor_env.monitor.close()
-
-def main(_):
-  with tf.Graph().as_default(), tf.Session() as session:
-    K.set_session(session)
-
-    a3cAgent = A3CAgent()
-    graph_ops = a3cAgent.compile()
-    saver = tf.train.Saver()
-    
-    if TRAINING:
-        a3cAgent.train(session, graph_ops, saver)
-    else:
-        a3cAgent.evaluation(session, graph_ops, saver)
-
-if __name__ == "__main__":
-  tf.app.run()
