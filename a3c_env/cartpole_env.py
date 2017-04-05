@@ -1,5 +1,5 @@
 import numpy as np
-from environment import Environment
+from env import Environment
 
 class CartPoleEnvironment(Environment):
     def __init__(self, gym_env):

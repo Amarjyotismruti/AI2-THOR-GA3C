@@ -3,7 +3,7 @@ from skimage.transform import resize
 from skimage.color import rgb2gray
 import numpy as np
 from collections import deque
-from environment import Environment
+from env import Environment
 
 class AtariEnvironment(Environment):
     """

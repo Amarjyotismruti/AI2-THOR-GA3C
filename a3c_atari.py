@@ -2,7 +2,7 @@ import tensorflow as tf
 import keras.backend as K
 from a3c import A3CAgent
 import gym
-from atari_environment import AtariEnvironment
+from a3c_env.atari_env import AtariEnvironment
 from utils import get_output_folder, mean_huber_loss
 
 flags = tf.app.flags
