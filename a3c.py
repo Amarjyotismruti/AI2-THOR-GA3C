@@ -164,7 +164,7 @@ class A3CAgent:
                 ep_reward = 0
                 ep_t = 0
 
-    def compile(self):
+    def compile(self, loss_func):
         # Create shared global policy and value networks
         s, \
         p_network, \

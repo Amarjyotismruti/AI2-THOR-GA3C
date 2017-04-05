@@ -54,7 +54,7 @@ def main(_):
 							num_actions, 
 							output_dir, 
 							np.inf)
-		graph_ops = a3cAgent.compile()
+		graph_ops = a3cAgent.compile(mean_huber_loss)
 		saver = tf.train.Saver()
 
 		if FLAGS.testing:
