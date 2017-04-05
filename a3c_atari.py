@@ -6,11 +6,19 @@ from atari_environment import AtariEnvironment
 
 flags = tf.app.flags
 flags.DEFINE_string('env', 'Breakout-v0', 'Name of the environment')
+flags.DEFINE_boolean('model', 'deep_Q_network', 'type of network')
 flags.DEFINE_boolean('testing', False, 'If true, run gym evaluation')
+flags.DEFINE_integer('checkpoint_interval', 5000, 'Checkpoint the model every n iterations')
+flags.DEFINE_integer('summary_interval', 5, 'Save training summary to file every n iterations')
+flags.DEFINE_boolean('show_training', True, 'If true, then render evironments during training')
 flags.DEFINE_integer('num_concurrent', 8, 'Number of concurrent threads during training.')
 flags.DEFINE_integer('agent_history_length', 4, 'History window length.')
 flags.DEFINE_integer('resized_width', 84, 'Scale screen to this width.')
 flags.DEFINE_integer('resized_height', 84, 'Scale screen to this height.')
+flags.DEFINE_float('gamma', 0.99, 'Reward discount rate.')
+flags.DEFINE_float('learning_rate', 0.0001, 'Learning rate.')
+flags.DEFINE_integer('num_iterations', 25000000, 'Number of training timesteps.')
+flags.DEFINE_integer('batch_size', 32, 'Size of batch to update network')
 FLAGS = flags.FLAGS
 
 def main(_):
