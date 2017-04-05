@@ -13,7 +13,6 @@ from keras.layers import Convolution2D, Flatten, Dense
 from collections import deque
 from a3c_model import build_policy_and_value_networks
 from keras import backend as K
-from atari_environment import AtariEnvironment
 
 class A3CAgent:
     # Path params
@@ -74,12 +73,6 @@ class A3CAgent:
         val_summary_placeholder, \
         update_ep_val, \
         summary_op = summary_ops
-
-        # Wrap env with AtariEnvironment helper class
-        env = AtariEnvironment(gym_env=env, \
-                               resized_width=self.RESIZED_WIDTH, \
-                               resized_height=self.RESIZED_HEIGHT, \
-                               agent_history_length=self.AGENT_HISTORY_LENGTH)
 
         time.sleep(5*num)
 
@@ -199,10 +192,7 @@ class A3CAgent:
                update_ep_val, \
                summary_op
 
-    def train(self, session, graph_ops, saver):
-        # Set up game environments (one per thread)
-        envs = [gym.make(self.GAME) for i in range(self.NUM_CONCURRENT)]
-        
+    def train(self, envs, session, graph_ops, saver):        
         summary_ops = self.setup_summaries()
         summary_op = summary_ops[-1]
 
@@ -226,7 +216,7 @@ class A3CAgent:
         while True:
             if self.SHOW_TRAINING:
                 for env in envs:
-                    env.render()
+                    env.env.render()
             now = time.time()
             if now - last_summary_time > self.SUMMARY_INTERVAL:
                 summary_str = session.run(summary_op)
@@ -235,27 +225,20 @@ class A3CAgent:
         for t in actor_learner_threads:
             t.join()
 
-    def evaluation(self, session, graph_ops, saver):
+    def evaluation(self, monitor_env, session, graph_ops, saver):
         saver.restore(session, CHECKPOINT_NAME)
         print("Restored model weights from ", CHECKPOINT_NAME)
-        monitor_env = gym.make(self.GAME)
         monitor_env.monitor.start('/tmp/'+EXPERIMENT_NAME+"/eval")
 
         # Unpack graph ops
         s, a_t, R_t, minimize, p_network, v_network = graph_ops
-
-        # Wrap env with AtariEnvironment helper class
-        env = AtariEnvironment(gym_env=monitor_env, \
-                               resized_width=self.RESIZED_WIDTH, \
-                               resized_height=self.RESIZED_HEIGHT, \
-                               agent_history_length=self.AGENT_HISTORY_LENGTH)
 
         for i_episode in xrange(100):
             s_t = env.get_initial_state()
             ep_reward = 0
             terminal = False
             while not terminal:
-                monitor_env.render()
+                monitor_env.env.render()
                 # Forward the deep q network, get Q(s,a) values
                 probs = p_network.eval(session = session, feed_dict = {s : [s_t]})[0]
                 action_index = self.sample_policy_action(self.ACTIONS, probs)
