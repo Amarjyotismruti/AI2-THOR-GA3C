@@ -110,7 +110,7 @@ class A3CAgent:
                 state_batch.append(state)
                 action_batch.append(action_mask)
 
-                next_state, reward, terminal, info = env.step(action)
+                state, reward, terminal, info = env.step(action)
                 ep_reward += reward
 
                 reward = np.clip(reward, -1, 1)
@@ -122,8 +122,6 @@ class A3CAgent:
                 async_update_count += 1
                 self.iteration += 1
                 ep_iters += 1
-                
-                state = next_state
 
             if terminal:
                 target = 0
@@ -254,8 +252,7 @@ class A3CAgent:
                 monitor_env.render()
                 probs = p_network.eval(session = session, feed_dict = {state_input: [state]})[0]
                 action = self.sample_policy_action(self.num_actions, probs)
-                next_state, reward, terminal, info = env.step(action)
-                state = next_state
+                state, reward, terminal, info = env.step(action)
                 ep_reward += reward
             print(ep_reward)
         monitor_env.monitor.close()
