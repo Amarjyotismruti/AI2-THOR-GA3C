@@ -1,0 +1,5 @@
+keras
+tensorflow
+scikit-image
+gym
+gym[atari]
