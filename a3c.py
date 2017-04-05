@@ -82,7 +82,7 @@ class A3CAgent:
 
     def actor_learner_thread(self, num, env, session, graph_ops, summary_ops, saver):
         # Unpack graph ops
-        state_input, action_input, R, minimize, p_network, v_network = graph_ops
+        state_input, action_input, target_input, minimize, p_network, v_network = graph_ops
 
         # Unpack tensorboard summary stuff
         r_summary_placeholder, \
@@ -145,18 +145,18 @@ class A3CAgent:
                 state = next_state
 
             if terminal:
-                R_t = 0
+                target = 0
             else:
-                R_t = session.run(v_network, feed_dict={state_input: [state]})[0][0] # Bootstrap from last state
+                target = session.run(v_network, feed_dict={state_input: [state]})[0][0] # Bootstrap from last state
 
-            ep_avg_v = ep_avg_v + R_t
+            ep_avg_v = ep_avg_v + target
             v_steps = v_steps + 1
 
-            R_batch = np.zeros(t)
+            target_batch = np.zeros(t)
             for i in reversed(range(t_start, t)):
-                R_batch[i] = past_rewards[i] + self.gamma * R_t
+                target_batch[i] = past_rewards[i] + self.gamma * target
 
-            session.run(minimize, feed_dict={R : R_batch,
+            session.run(minimize, feed_dict={target_input: target_batch,
                                              action_input: action_batch,
                                              state_input: state_batch})
             
@@ -273,7 +273,7 @@ class A3CAgent:
         monitor_env.monitor.start(self.video_save_path)
 
         # Unpack graph ops
-        state_input, action_mask, R_t, minimize, p_network, v_network = graph_ops
+        state_input, action_mask, target, minimize, p_network, v_network = graph_ops
 
         for i_episode in range(100):
             state = env.get_initial_state()
