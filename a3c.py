@@ -181,11 +181,13 @@ class A3CAgent:
         # Op for applying remote gradients
         R_t = tf.placeholder("float", [None])
         a_t = tf.placeholder("float", [None, self.num_actions])
-        log_prob = tf.log(tf.reduce_sum(tf.multiply(p_network, a_t), reduction_indices=1))
-        p_loss = -log_prob * (R_t - v_network)
-        v_loss = tf.reduce_mean(tf.square(R_t - v_network))
 
-        total_loss = p_loss + (0.5 * v_loss)
+        v_network_flat = tf.reshape(v_network, shape=[-1]);
+        p_network_masked = tf.reduce_sum(tf.multiply(p_network, a_t), reduction_indices=1)
+        p_loss = loss_func(p_network_masked, R_t - v_network_flat, max_grad=self.max_grad)
+        v_loss = tf.reduce_mean(tf.square(R_t - v_network)) / 2
+
+        total_loss = p_loss + v_loss
 
         minimize = optimizer.minimize(total_loss)
         return s, a_t, R_t, minimize, p_network, v_network
