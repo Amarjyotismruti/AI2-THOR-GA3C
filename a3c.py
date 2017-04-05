@@ -100,7 +100,7 @@ class A3CAgent:
         ep_avg_v = 0
         ep_max_p = 0
         v_steps = 0
-        ep_t = 0
+        ep_iters = 0
 
         state = env.get_initial_state()
         terminal = False
@@ -133,7 +133,7 @@ class A3CAgent:
 
                 async_update_count += 1
                 self.iteration += 1
-                ep_t += 1
+                ep_iters += 1
                 
                 state = next_state
 
@@ -160,15 +160,15 @@ class A3CAgent:
                 # Episode ended, collect stats and reset game
                 if v_steps > 0:
                     session.run(update_ep_val, feed_dict={val_summary_placeholder: ep_avg_v/v_steps})
-                if ep_t > 0:
-                    session.run(update_ep_pol, feed_dict={pol_summary_placeholder: ep_max_p/ep_t})
+                if ep_iters > 0:
+                    session.run(update_ep_pol, feed_dict={pol_summary_placeholder: ep_max_p/ep_iters})
                 session.run(update_ep_reward, feed_dict={r_summary_placeholder: ep_reward})
                 print("THREAD:", num, "/ TIME", self.iteration, "/ REWARD", ep_reward)
                 state = env.get_initial_state()
                 terminal = False
                 # Reset per-episode counters
                 ep_reward = 0
-                ep_t = 0
+                ep_iters = 0
                 ep_avg_v = 0
                 v_steps = 0
                 ep_max_p = 0
