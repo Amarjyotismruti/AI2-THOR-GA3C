@@ -47,7 +47,19 @@ class A3CAgent:
     TMAX = 80000000
     t_max = 32
 
-    def __init__(self):
+    def __init__(self, 
+                 model_name, 
+                 checkpoint_interval, 
+                 summary_interval, 
+                 show_training, 
+                 num_concurrent, 
+                 agent_history_length, 
+                 resized_width, 
+                 resized_height, 
+                 gamma, 
+                 learning_rate, 
+                 num_iterations, 
+                 batch_size):
         pass
 
     def sample_policy_action(self, num_actions, probs):

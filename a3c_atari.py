@@ -36,7 +36,18 @@ def main(_):
 	with tf.Graph().as_default(), tf.Session() as session:
 		K.set_session(session)
 
-		a3cAgent = A3CAgent()
+		a3cAgent = A3CAgent(FLAGS.model, 
+							FLAGS.checkpoint_interval, 
+							FLAGS.summary_interval, 
+							FLAGS.show_training, 
+							FLAGS.num_concurrent, 
+							FLAGS.agent_history_length, 
+							FLAGS.resized_width, 
+							FLAGS.resized_height, 
+							FLAGS.gamma, 
+							FLAGS.learning_rate, 
+							FLAGS.num_iterations, 
+							FLAGS.batch_size)
 		graph_ops = a3cAgent.compile()
 		saver = tf.train.Saver()
 
