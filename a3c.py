@@ -110,10 +110,9 @@ class A3CAgent:
             past_rewards = []
             action_batch = []
 
-            t = 0
-            t_start = t
+            async_update_count = 0
 
-            while not (terminal or ((t - t_start)  == self.async_update)):
+            while not (terminal or async_update_count  == self.async_update):
                 # Perform action according to policy pi(action | state)
                 probs = session.run(p_network, feed_dict={state_input: [state]})[0]
                 action = self.sample_policy_action(self.num_actions, probs)
@@ -132,7 +131,7 @@ class A3CAgent:
                 max_p = np.max(probs)
                 ep_max_p = ep_max_p + max_p
 
-                t += 1
+                async_update_count += 1
                 self.iteration += 1
                 ep_t += 1
                 
@@ -146,8 +145,8 @@ class A3CAgent:
             ep_avg_v = ep_avg_v + target
             v_steps = v_steps + 1
 
-            target_batch = np.zeros(t)
-            for i in reversed(range(t_start, t)):
+            target_batch = np.zeros(async_update_count)
+            for i in reversed(range(async_update_count)):
                 target_batch[i] = past_rewards[i] + self.gamma * target
 
             session.run(minimize, feed_dict={target_input: target_batch,
