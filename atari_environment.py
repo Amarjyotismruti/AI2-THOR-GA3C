@@ -10,16 +10,16 @@ class Environment(object):
     Responsible for preprocessing screens and holding on to a screen buffer 
     of size agent_history_length from which environment state is constructed.
     """
-    def __init__(self, gym_env, resized_width, resized_height, agent_history_length):
+    def __init__(self):
         NotImplementedError
 
     def get_initial_state(self):
         NotImplementedError
 
-    def get_preprocessed_frame(self, observation):
+    def get_preprocessed_frame(self):
         NotImplementedError
 
-    def step(self, action_index):
+    def step(self):
         NotImplementedError
 
 class AtariEnvironment(Environment):
