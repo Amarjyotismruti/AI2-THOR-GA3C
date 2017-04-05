@@ -250,7 +250,7 @@ class A3CAgent:
         # Unpack graph ops
         s, a_t, R_t, minimize, p_network, v_network = graph_ops
 
-        for i_episode in xrange(100):
+        for i_episode in range(100):
             s_t = env.get_initial_state()
             ep_reward = 0
             terminal = False
