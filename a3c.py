@@ -13,13 +13,14 @@ from keras.layers import Convolution2D, Flatten, Dense
 from collections import deque
 from a3c_model import build_policy_and_value_networks
 from keras import backend as K
+import os
 
 class A3CAgent:
     # Path params
-    EXPERIMENT_NAME = "breakout_a3c"
-    SUMMARY_SAVE_PATH = "./logs/%s" % EXPERIMENT_NAME
-    CHECKPOINT_SAVE_PATH = "./models/%s.ckpt" % EXPERIMENT_NAME
-    CHECKPOINT_NAME = "./models/%s.ckpt-5" % EXPERIMENT_NAME
+    summary_save_path = "./%s/logs"
+    model_save_path = "./%s/models"
+    checkpoint_name = "%s.ckpt"
+    video_save_path = "./%s/video"
 
     iteration = 0
     
@@ -36,7 +37,8 @@ class A3CAgent:
                  learning_rate, 
                  num_iterations, 
                  batch_size,
-                 num_actions):
+                 num_actions, 
+                 output_dir):
         self.model_name = model_name
         self.checkpoint_interval = checkpoint_interval
         self.summary_interval = summary_interval
@@ -50,6 +52,20 @@ class A3CAgent:
         self.num_iterations = num_iterations
         self.batch_size = batch_size
         self.num_actions = num_actions
+        self.output_dir = output_dir
+
+        self.summary_save_path = self.summary_save_path % self.output_dir
+        self.model_save_path = self.model_save_path % self.output_dir
+        self.checkpoint_name = self.checkpoint_name % self.model_name
+        self.video_save_path = self.video_save_path % self.output_dir
+
+        self.checkpoint_save_path = os.path.join(self.model_save_path, self.checkpoint_name)
+
+        if not os.path.exists(self.model_save_path):
+            os.makedirs(self.model_save_path)
+
+        if not os.path.exists(self.video_save_path):
+            os.makedirs(self.video_save_path)
 
     def sample_policy_action(self, num_actions, probs):
         """
@@ -138,7 +154,7 @@ class A3CAgent:
             
             # Save progress every 5000 iterations
             if self.iteration % self.checkpoint_interval == 0:
-                saver.save(session, CHECKPOINT_SAVE_PATH, global_step = T)
+                saver.save(session, self.checkpoint_save_path, global_step = self.iteration)
 
             if terminal:
                 # Episode ended, collect stats and reset game
@@ -199,7 +215,7 @@ class A3CAgent:
 
         # Initialize variables
         session.run(tf.initialize_all_variables())
-        writer = tf.summary.FileWriter(self.SUMMARY_SAVE_PATH, session.graph)
+        writer = tf.summary.FileWriter(self.summary_save_path, session.graph)
 
         # Start num_concurrent training threads
         actor_learner_threads = [threading.Thread(target=self.actor_learner_thread, \
@@ -227,9 +243,9 @@ class A3CAgent:
             t.join()
 
     def evaluation(self, monitor_env, session, graph_ops, saver):
-        saver.restore(session, CHECKPOINT_NAME)
-        print("Restored model weights from ", CHECKPOINT_NAME)
-        monitor_env.monitor.start('./video/'+EXPERIMENT_NAME+"/eval")
+        saver.restore(session, self.checkpoint_save_path)
+        print("Restored model weights from ", self.checkpoint_save_path)
+        monitor_env.monitor.start(self.video_save_path)
 
         # Unpack graph ops
         s, a_t, R_t, minimize, p_network, v_network = graph_ops
