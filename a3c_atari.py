@@ -30,7 +30,7 @@ def main(_):
 		FLAGS.num_concurrent = 1
 		
 	# Set up game environments (one per thread)
-	envs = [gym.make(FLAGS.env) for i in range(FLAGS.num_concurrent)]
+	envs = [gym.make(FLAGS.env) for _ in range(FLAGS.num_concurrent)]
 	envs = [AtariEnvironment(gym_env=env, \
 							 resized_width=FLAGS.resized_width, \
 							 resized_height=FLAGS.resized_height, \
