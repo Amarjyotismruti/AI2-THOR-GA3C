@@ -67,12 +67,7 @@ class A3CAgent:
             os.makedirs(self.video_save_path)
 
     def sample_policy_action(self, num_actions, probs):
-        """
-        Sample an action from an action probability distribution output by
-        the policy network.
-        """
         probs = probs - np.finfo(np.float32).epsneg
-
         histogram = np.random.multinomial(1, probs)
         action = int(np.nonzero(histogram)[0])
         return action
@@ -115,11 +110,11 @@ class A3CAgent:
                 state_batch.append(state)
                 action_batch.append(action_mask)
 
-                next_state, r_t, terminal, info = env.step(action)
-                ep_reward += r_t
+                next_state, reward, terminal, info = env.step(action)
+                ep_reward += reward
 
-                r_t = np.clip(r_t, -1, 1)
-                past_rewards.append(r_t)
+                reward = np.clip(reward, -1, 1)
+                past_rewards.append(reward)
 
                 max_p = np.max(probs)
                 ep_max_p = ep_max_p + max_p
@@ -259,8 +254,8 @@ class A3CAgent:
                 monitor_env.render()
                 probs = p_network.eval(session = session, feed_dict = {state_input: [state]})[0]
                 action = self.sample_policy_action(self.num_actions, probs)
-                next_state, r_t, terminal, info = env.step(action)
+                next_state, reward, terminal, info = env.step(action)
                 state = next_state
-                ep_reward += r_t
+                ep_reward += reward
             print(ep_reward)
         monitor_env.monitor.close()
