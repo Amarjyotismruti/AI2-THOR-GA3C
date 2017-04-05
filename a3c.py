@@ -102,8 +102,6 @@ class A3CAgent:
         v_steps = 0
         ep_t = 0
 
-        probs_summary_t = 0
-
         state = env.get_initial_state()
         terminal = False
 
@@ -122,9 +120,6 @@ class A3CAgent:
                 action_mask = np.zeros([self.num_actions])
                 action_mask[action] = 1
 
-                # if probs_summary_t % 100 == 0:
-                #    print("P, ", np.max(probs), "V ", session.run(v_network, feed_dict={state_input: [state]})[0][0])
-
                 state_batch.append(state)
                 action_batch.append(action_mask)
 
@@ -140,7 +135,6 @@ class A3CAgent:
                 t += 1
                 self.iteration += 1
                 ep_t += 1
-                probs_summary_t += 1
                 
                 state = next_state
 
