@@ -4,7 +4,25 @@ from skimage.color import rgb2gray
 import numpy as np
 from collections import deque
 
-class AtariEnvironment(object):
+class Environment(object):
+    """
+    Small wrapper for environments.
+    Responsible for preprocessing screens and holding on to a screen buffer 
+    of size agent_history_length from which environment state is constructed.
+    """
+    def __init__(self, gym_env, resized_width, resized_height, agent_history_length):
+        NotImplementedError
+
+    def get_initial_state(self):
+        NotImplementedError
+
+    def get_preprocessed_frame(self, observation):
+        NotImplementedError
+
+    def step(self, action_index):
+        NotImplementedError
+
+class AtariEnvironment(Environment):
     """
     Small wrapper for gym atari environments.
     Responsible for preprocessing screens and holding on to a screen buffer 
