@@ -4,6 +4,10 @@ from keras.layers import Convolution2D, Flatten, Dense, Input
 from keras.models import Model
 
 def build_policy_and_value_networks(model_name, num_actions, input_shape, window):
+    if 'a3c_networks' in model_name:
+        return build_a3c_networks(num_actions, window, input_shape)
+
+def build_a3c_networks(num_actions, window, input_shape):
     with tf.device("/cpu:0"):
         state = tf.placeholder("float", [None, window] + list(input_shape))
         
