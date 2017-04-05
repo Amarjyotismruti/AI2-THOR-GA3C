@@ -145,8 +145,7 @@ class A3CAgent:
 
             R_batch = np.zeros(t)
             for i in reversed(range(t_start, t)):
-                R_t = past_rewards[i] + self.gamma * R_t
-                R_batch[i] = R_t
+                R_batch[i] = past_rewards[i] + self.gamma * R_t
 
             session.run(minimize, feed_dict={R : R_batch,
                                              a : a_batch,
