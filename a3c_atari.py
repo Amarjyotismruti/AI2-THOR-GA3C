@@ -8,7 +8,7 @@ from utils import get_output_folder
 flags = tf.app.flags
 flags.DEFINE_string('output', 'atari-v0', 'Name of the output folder')
 flags.DEFINE_string('env', 'Breakout-v0', 'Name of the environment')
-flags.DEFINE_boolean('model', 'deep_Q_network', 'type of network')
+flags.DEFINE_string('model', 'deep_Q_network', 'type of network')
 flags.DEFINE_boolean('testing', False, 'If true, run gym evaluation')
 flags.DEFINE_integer('checkpoint_interval', 5000, 'Checkpoint the model every n iterations')
 flags.DEFINE_integer('summary_interval', 5, 'Save training summary to file every n iterations')
