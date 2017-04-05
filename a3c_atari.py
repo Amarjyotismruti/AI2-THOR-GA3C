@@ -32,6 +32,7 @@ def main(_):
 							 resized_height=FLAGS.resized_height, \
 							 agent_history_length=FLAGS.agent_history_length)
 							 for env in envs]
+	num_actions = envs[0].env.action_space.n
 
 	with tf.Graph().as_default(), tf.Session() as session:
 		K.set_session(session)
@@ -47,7 +48,8 @@ def main(_):
 							FLAGS.gamma, 
 							FLAGS.learning_rate, 
 							FLAGS.num_iterations, 
-							FLAGS.batch_size)
+							FLAGS.batch_size,
+							num_actions)
 		graph_ops = a3cAgent.compile()
 		saver = tf.train.Saver()
 

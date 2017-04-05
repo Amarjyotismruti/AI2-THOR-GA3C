@@ -59,7 +59,8 @@ class A3CAgent:
                  gamma, 
                  learning_rate, 
                  num_iterations, 
-                 batch_size):
+                 batch_size,
+                 num_actions):
         pass
 
     def sample_policy_action(self, num_actions, probs):
