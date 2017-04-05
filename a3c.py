@@ -104,7 +104,7 @@ def actor_learner_thread(num, env, session, graph_ops, summary_ops, saver):
             a_t[action_index] = 1
 
             if probs_summary_t % 100 == 0:
-                print "P, ", np.max(probs), "V ", session.run(v_network, feed_dict={s: [s_t]})[0][0]
+                print("P, ", np.max(probs), "V ", session.run(v_network, feed_dict={s: [s_t]})[0][0])
 
             s_batch.append(s_t)
             a_batch.append(a_t)
@@ -143,7 +143,7 @@ def actor_learner_thread(num, env, session, graph_ops, summary_ops, saver):
         if terminal:
             # Episode ended, collect stats and reset game
             session.run(update_ep_reward, feed_dict={r_summary_placeholder: ep_reward})
-            print "THREAD:", num, "/ TIME", T, "/ REWARD", ep_reward
+            print("THREAD:", num, "/ TIME", T, "/ REWARD", ep_reward)
             s_t = env.get_initial_state()
             terminal = False
             # Reset per-episode counters
@@ -214,7 +214,7 @@ def train(session, graph_ops, saver):
 
 def evaluation(session, graph_ops, saver):
     saver.restore(session, CHECKPOINT_NAME)
-    print "Restored model weights from ", CHECKPOINT_NAME
+    print("Restored model weights from ", CHECKPOINT_NAME)
     monitor_env = gym.make(GAME)
     monitor_env.monitor.start('/tmp/'+EXPERIMENT_NAME+"/eval")
 
@@ -236,7 +236,7 @@ def evaluation(session, graph_ops, saver):
             s_t1, r_t, terminal, info = env.step(action_index)
             s_t = s_t1
             ep_reward += r_t
-        print ep_reward
+        print(ep_reward)
     monitor_env.monitor.close()
 
 def main(_):

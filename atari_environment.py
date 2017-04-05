@@ -19,7 +19,7 @@ class AtariEnvironment(object):
 
         self.gym_actions = range(gym_env.action_space.n)
         if (gym_env.spec.id == "Pong-v0" or gym_env.spec.id == "Breakout-v0"):
-            print "Doing workaround for pong or breakout"
+            print("Doing workaround for pong or breakout")
             # Gym returns 6 possible actions for breakout and pong.
             # Only three are used, the rest are no-ops. This just lets us
             # pick from a simplified "LEFT", "RIGHT", "NOOP" action space.
