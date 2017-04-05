@@ -6,8 +6,10 @@ from keras.models import Model
 def build_policy_and_value_networks(model_name, num_actions, input_shape, window):
     if 'a3c_networks' in model_name:
         return build_a3c_networks(num_actions, window, input_shape)
-    elif 'cartole' in model_name:
-        return build_cartpole_networks(num_actions, window, input_shape)
+    elif 'cartpole' in model_name:
+        return build_cartpole_networks(num_actions, input_shape)
+    else:
+        raise('Model does not exist.')
 
 def build_a3c_networks(num_actions, window, input_shape):
     with tf.device("/cpu:0"):
@@ -34,15 +36,15 @@ def build_a3c_networks(num_actions, window, input_shape):
 
     return state, p_out, v_out, p_params, v_params
 
-def build_cartpole_networks(num_actions, window, input_shape):
+def build_cartpole_networks(num_actions, input_shape):
     with tf.device("/cpu:0"):
-        state = tf.placeholder("float", [None, window] + list(input_shape))
+        state = tf.placeholder("float", [None, 1] + list(input_shape))
 
-        inputs = Input(shape=input_shape+(1,))
-        shared = Flatten()(input)
-        shared = Dense(32, activation="relu")(x)
-        shared = Dense(32, activation="relu")(x)
-        shared = Dense(32, activation="relu")(x)
+        inputs = Input(shape=(1,)+input_shape)
+        shared = Flatten()(inputs)
+        shared = Dense(32, activation="relu")(shared)
+        shared = Dense(32, activation="relu")(shared)
+        shared = Dense(32, activation="relu")(shared)
 
         action_probs = Dense(name="p", output_dim=num_actions, activation='softmax')(shared)
         
