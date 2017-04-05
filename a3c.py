@@ -167,7 +167,7 @@ def build_graph():
     total_loss = p_loss + (0.5 * v_loss)
 
     minimize = optimizer.minimize(total_loss)
-    return s, a_t, R_t, minimize
+    return s, a_t, R_t, minimize, p_network, v_network
 
 # Set up some episode summary ops to visualize on tensorboard.
 def setup_summaries():
@@ -219,7 +219,7 @@ def evaluation(session, graph_ops, saver):
     monitor_env.monitor.start('/tmp/'+EXPERIMENT_NAME+"/eval")
 
     # Unpack graph ops
-    s, a_t, R_t, learning_rate, minimize, p_network, v_network = graph_ops
+    s, a_t, R_t, minimize, p_network, v_network = graph_ops
 
     # Wrap env with AtariEnvironment helper class
     env = AtariEnvironment(gym_env=monitor_env, resized_width=RESIZED_WIDTH, resized_height=RESIZED_HEIGHT, agent_history_length=AGENT_HISTORY_LENGTH)
