@@ -211,7 +211,7 @@ class A3CAgent:
         summary_op = summary_ops[-1]
 
         # Initialize variables
-        session.run(tf.initialize_all_variables())
+        session.run(tf.global_variables_initializer())
         writer = tf.summary.FileWriter(self.summary_save_path, session.graph)
 
         # Start num_concurrent training threads
