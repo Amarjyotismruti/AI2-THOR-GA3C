@@ -77,12 +77,12 @@ class A3CAgent:
         probs = probs - np.finfo(np.float32).epsneg
 
         histogram = np.random.multinomial(1, probs)
-        action_index = int(np.nonzero(histogram)[0])
-        return action_index
+        action = int(np.nonzero(histogram)[0])
+        return action
 
     def actor_learner_thread(self, num, env, session, graph_ops, summary_ops, saver):
         # Unpack graph ops
-        state_input, a, R, minimize, p_network, v_network = graph_ops
+        state_input, action_input, R, minimize, p_network, v_network = graph_ops
 
         # Unpack tensorboard summary stuff
         r_summary_placeholder, \
@@ -110,25 +110,25 @@ class A3CAgent:
         while self.iteration < self.num_iterations:
             state_batch = []
             past_rewards = []
-            a_batch = []
+            action_batch = []
 
             t = 0
             t_start = t
 
             while not (terminal or ((t - t_start)  == self.async_update)):
-                # Perform action a_t according to policy pi(a_t | state)
+                # Perform action according to policy pi(action | state)
                 probs = session.run(p_network, feed_dict={state_input: [state]})[0]
-                action_index = self.sample_policy_action(self.num_actions, probs)
-                a_t = np.zeros([self.num_actions])
-                a_t[action_index] = 1
+                action = self.sample_policy_action(self.num_actions, probs)
+                action_mask = np.zeros([self.num_actions])
+                action_mask[action] = 1
 
                 # if probs_summary_t % 100 == 0:
                 #    print("P, ", np.max(probs), "V ", session.run(v_network, feed_dict={state_input: [state]})[0][0])
 
                 state_batch.append(state)
-                a_batch.append(state)
+                action_batch.append(action_mask)
 
-                next_state, r_t, terminal, info = env.step(action_index)
+                next_state, r_t, terminal, info = env.step(action)
                 ep_reward += r_t
 
                 r_t = np.clip(r_t, -1, 1)
@@ -157,7 +157,7 @@ class A3CAgent:
                 R_batch[i] = past_rewards[i] + self.gamma * R_t
 
             session.run(minimize, feed_dict={R : R_batch,
-                                             a : a_batch,
+                                             action_input: action_batch,
                                              state_input: state_batch})
             
             if self.iteration % self.checkpoint_interval == 0:
@@ -273,7 +273,7 @@ class A3CAgent:
         monitor_env.monitor.start(self.video_save_path)
 
         # Unpack graph ops
-        state_input, a_t, R_t, minimize, p_network, v_network = graph_ops
+        state_input, action_mask, R_t, minimize, p_network, v_network = graph_ops
 
         for i_episode in range(100):
             state = env.get_initial_state()
@@ -283,8 +283,8 @@ class A3CAgent:
                 monitor_env.render()
                 # Forward the deep q network, get Q(s,a) values
                 probs = p_network.eval(session = session, feed_dict = {state_input: [state]})[0]
-                action_index = self.sample_policy_action(self.num_actions, probs)
-                next_state, r_t, terminal, info = env.step(action_index)
+                action = self.sample_policy_action(self.num_actions, probs)
+                next_state, r_t, terminal, info = env.step(action)
                 state = next_state
                 ep_reward += r_t
             print(ep_reward)
