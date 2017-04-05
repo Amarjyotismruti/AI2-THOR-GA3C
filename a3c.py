@@ -228,7 +228,7 @@ class A3CAgent:
     def evaluation(self, monitor_env, session, graph_ops, saver):
         saver.restore(session, CHECKPOINT_NAME)
         print("Restored model weights from ", CHECKPOINT_NAME)
-        monitor_env.monitor.start('/tmp/'+EXPERIMENT_NAME+"/eval")
+        monitor_env.monitor.start('./video/'+EXPERIMENT_NAME+"/eval")
 
         # Unpack graph ops
         s, a_t, R_t, minimize, p_network, v_network = graph_ops
