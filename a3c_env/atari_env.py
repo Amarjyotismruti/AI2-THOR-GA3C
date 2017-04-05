@@ -3,8 +3,9 @@ from skimage.transform import resize
 from skimage.color import rgb2gray
 import numpy as np
 from collections import deque
+from env import Environment
 
-class AtariEnvironment(object):
+class AtariEnvironment(Environment):
     """
     Small wrapper for gym atari environments.
     Responsible for preprocessing screens and holding on to a screen buffer 
@@ -16,14 +17,7 @@ class AtariEnvironment(object):
         self.resized_width = resized_width
         self.resized_height = resized_height
         self.agent_history_length = agent_history_length
-
         self.gym_actions = range(gym_env.action_space.n)
-        if (gym_env.spec.id == "Pong-v0" or gym_env.spec.id == "Breakout-v0"):
-            print "Doing workaround for pong or breakout"
-            # Gym returns 6 possible actions for breakout and pong.
-            # Only three are used, the rest are no-ops. This just lets us
-            # pick from a simplified "LEFT", "RIGHT", "NOOP" action space.
-            self.gym_actions = [1,2,3]
 
         # Screen buffer of size AGENT_HISTORY_LENGTH to be able
         # to build state arrays of size [1, AGENT_HISTORY_LENGTH, width, height]
@@ -50,7 +44,7 @@ class AtariEnvironment(object):
         1) Get image grayscale
         2) Rescale image
         """
-        return resize(rgb2gray(observation), (self.resized_width, self.resized_height))
+        return resize(rgb2gray(observation), (self.resized_width, self.resized_height), mode = 'constant')
 
     def step(self, action_index):
         """
@@ -73,3 +67,6 @@ class AtariEnvironment(object):
         self.state_buffer.append(x_t1)
 
         return s_t1, r_t, terminal, info
+
+    def render(self):
+        self.env.render()
