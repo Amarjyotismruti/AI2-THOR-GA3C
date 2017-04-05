@@ -122,8 +122,8 @@ class A3CAgent:
                 a_t = np.zeros([self.num_actions])
                 a_t[action_index] = 1
 
-                if probs_summary_t % 100 == 0:
-                    print("P, ", np.max(probs), "V ", session.run(v_network, feed_dict={s: [s_t]})[0][0])
+                # if probs_summary_t % 100 == 0:
+                #    print("P, ", np.max(probs), "V ", session.run(v_network, feed_dict={s: [s_t]})[0][0])
 
                 s_batch.append(s_t)
                 a_batch.append(a_t)
