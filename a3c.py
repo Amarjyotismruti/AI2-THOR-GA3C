@@ -89,6 +89,8 @@ class A3CAgent:
         update_ep_reward, \
         val_summary_placeholder, \
         update_ep_val, \
+        pol_summary_placeholder, \
+        update_ep_pol, \
         summary_op = summary_ops
 
         time.sleep(5*num)
@@ -96,6 +98,7 @@ class A3CAgent:
         # Set up per-episode counters
         ep_reward = 0
         ep_avg_v = 0
+        ep_max_p = 0
         v_steps = 0
         ep_t = 0
 
@@ -131,6 +134,9 @@ class A3CAgent:
                 r_t = np.clip(r_t, -1, 1)
                 past_rewards.append(r_t)
 
+                max_p = np.max(probs)
+                ep_max_p = ep_max_p + max_p
+
                 t += 1
                 self.iteration += 1
                 ep_t += 1
@@ -161,6 +167,8 @@ class A3CAgent:
                 # Episode ended, collect stats and reset game
                 if v_steps > 0:
                     session.run(update_ep_val, feed_dict={val_summary_placeholder: ep_avg_v/v_steps})
+                if ep_t > 0:
+                    session.run(update_ep_pol, feed_dict={pol_summary_placeholder: ep_max_p/ep_t})
                 session.run(update_ep_reward, feed_dict={r_summary_placeholder: ep_reward})
                 print("THREAD:", num, "/ TIME", self.iteration, "/ REWARD", ep_reward)
                 s_t = env.get_initial_state()
@@ -170,6 +178,7 @@ class A3CAgent:
                 ep_t = 0
                 ep_avg_v = 0
                 v_steps = 0
+                ep_max_p = 0
 
     def compile(self, loss_func):
         # Create shared global policy and value networks
@@ -205,15 +214,24 @@ class A3CAgent:
         tf.summary.scalar("Episode Reward", episode_reward)
         r_summary_placeholder = tf.placeholder("float")
         update_ep_reward = episode_reward.assign(r_summary_placeholder)
+        
         ep_avg_v = tf.Variable(0.)
         tf.summary.scalar("Episode Value", ep_avg_v)
         val_summary_placeholder = tf.placeholder("float")
         update_ep_val = ep_avg_v.assign(val_summary_placeholder)
+
+        ep_max_p = tf.Variable(0.)
+        tf.summary.scalar("Episode Max Policy", ep_max_p)
+        pol_summary_placeholder = tf.placeholder("float")
+        update_ep_pol = ep_max_p.assign(pol_summary_placeholder)
+
         summary_op = tf.summary.merge_all()
         return r_summary_placeholder, \
                update_ep_reward, \
                val_summary_placeholder, \
                update_ep_val, \
+               pol_summary_placeholder, \
+               update_ep_pol, \
                summary_op
 
     def train(self, envs, session, graph_ops, saver):        
