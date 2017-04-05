@@ -152,9 +152,8 @@ class A3CAgent:
                                              a : a_batch,
                                              s : s_batch})
             
-            # Save progress every 5000 iterations
             if self.iteration % self.checkpoint_interval == 0:
-                saver.save(session, self.checkpoint_save_path, global_step = self.iteration)
+                saver.save(session, self.checkpoint_save_path)
 
             if terminal:
                 # Episode ended, collect stats and reset game
