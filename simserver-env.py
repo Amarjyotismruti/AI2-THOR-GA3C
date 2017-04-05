@@ -49,6 +49,6 @@ class THOR-env(env):
 
     	self.env.reset(self.floor_name)
 
-    def 
+  
 
 
