@@ -77,8 +77,8 @@ class A3CAgent:
         action = int(np.nonzero(histogram)[0])
         return action
 
-    def actor_learner_thread(self, num, env, session, graph_ops, summary_ops, saver):
-        state_input, action_input, target_input, minimize, p_network, v_network = graph_ops
+    def actor_learner_thread(self, num, env, session, model, summary_ops, saver):
+        state_input, action_input, target_input, minimize, p_network, v_network = model
 
         r_summary_placeholder, \
         update_ep_reward, \
@@ -187,7 +187,7 @@ class A3CAgent:
         total_loss = p_loss + v_loss
         minimize = optimizer.minimize(total_loss)
         
-        return state, action_mask, target, minimize, p_network, v_network
+        self.model = state, action_mask, target, minimize, p_network, v_network
 
     def setup_summaries(self):
         episode_reward = tf.Variable(0.)
@@ -214,7 +214,7 @@ class A3CAgent:
                update_ep_pol, \
                summary_op
 
-    def train(self, envs, session, graph_ops, saver):        
+    def train(self, envs, session, saver):        
         summary_ops = self.setup_summaries()
         summary_op = summary_ops[-1]
 
@@ -225,7 +225,7 @@ class A3CAgent:
                                                   args=(thread_id, \
                                                         envs[thread_id], \
                                                         session, \
-                                                        graph_ops, \
+                                                        self.model, \
                                                         summary_ops, \
                                                         saver)) for thread_id in range(self.num_concurrent)]
         for thread in actor_learner_threads:
@@ -244,12 +244,12 @@ class A3CAgent:
         for thread in actor_learner_threads:
             thread.join()
 
-    def evaluation(self, monitor_env, session, graph_ops, saver):
+    def evaluation(self, monitor_env, session, saver):
         saver.restore(session, self.checkpoint_save_path)
         print("Restored model weights from ", self.checkpoint_save_path)
         monitor_env.monitor.start(self.video_save_path)
 
-        state_input, action_mask, target, minimize, p_network, v_network = graph_ops
+        state_input, action_mask, target, minimize, p_network, v_network = self.model
 
         for i_episode in range(100):
             state = env.get_initial_state()

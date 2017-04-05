@@ -54,13 +54,13 @@ def main(_):
 							num_actions=num_actions, 
 							output_dir=output_dir, 
 							max_grad=np.inf)
-		graph_ops = a3cAgent.compile(mean_huber_loss)
+		a3cAgent.compile(mean_huber_loss)
 		saver = tf.train.Saver()
 
 		if FLAGS.testing:
-			a3cAgent.evaluation(envs[0], session, graph_ops, saver)
+			a3cAgent.evaluation(envs[0], session, saver)
 		else:
-			a3cAgent.train(envs, session, graph_ops, saver)
+			a3cAgent.train(envs, session, saver)
 
 if __name__ == "__main__":
 	tf.app.run()
