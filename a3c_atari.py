@@ -37,6 +37,7 @@ def main(_):
 							 agent_history_length=FLAGS.agent_history_length)
 							 for env in envs]
 	num_actions = envs[0].env.action_space.n
+	input_shape = (FLAGS.resized_width, FLAGS.resized_height)
 
 	with tf.Graph().as_default(), tf.Session() as session:
 		K.set_session(session)
@@ -47,8 +48,7 @@ def main(_):
 							FLAGS.show_training, 
 							FLAGS.num_concurrent, 
 							FLAGS.agent_history_length, 
-							FLAGS.resized_width, 
-							FLAGS.resized_height, 
+							input_shape,
 							FLAGS.gamma, 
 							FLAGS.learning_rate, 
 							FLAGS.num_iterations, 

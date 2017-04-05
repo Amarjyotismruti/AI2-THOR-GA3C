@@ -31,8 +31,7 @@ class A3CAgent:
                  show_training, 
                  num_concurrent, 
                  agent_history_length, 
-                 resized_width, 
-                 resized_height, 
+                 input_shape,  
                  gamma, 
                  learning_rate, 
                  num_iterations, 
@@ -45,8 +44,7 @@ class A3CAgent:
         self.show_training = show_training
         self.num_concurrent = num_concurrent
         self.agent_history_length = agent_history_length
-        self.resized_width = resized_width
-        self.resized_height = resized_height
+        self.input_shape = input_shape
         self.gamma = gamma
         self.learning_rate = learning_rate
         self.num_iterations = num_iterations
@@ -171,10 +169,10 @@ class A3CAgent:
         p_network, \
         v_network, \
         p_params, \
-        v_params = build_policy_and_value_networks(num_actions=self.num_actions, \
-                                                   agent_history_length=self.agent_history_length, \
-                                                   resized_width=self.resized_width, \
-                                                   resized_height=self.resized_height)
+        v_params = build_policy_and_value_networks(model_name=self.model_name, \
+                                                   num_actions=self.num_actions, \
+                                                   input_shape=self.input_shape, \
+                                                   window=self.agent_history_length)
 
         # Shared global optimizer
         optimizer = tf.train.AdamOptimizer(self.learning_rate)
