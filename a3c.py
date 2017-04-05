@@ -160,7 +160,7 @@ def build_graph():
     # Op for applying remote gradients
     R_t = tf.placeholder("float", [None])
     a_t = tf.placeholder("float", [None, ACTIONS])
-    log_prob = tf.log(tf.reduce_sum(tf.mul(p_network, a_t), reduction_indices=1))
+    log_prob = tf.log(tf.reduce_sum(tf.multiply(p_network, a_t), reduction_indices=1))
     p_loss = -log_prob * (R_t - v_network)
     v_loss = tf.reduce_mean(tf.square(R_t - v_network))
 
@@ -172,14 +172,14 @@ def build_graph():
 # Set up some episode summary ops to visualize on tensorboard.
 def setup_summaries():
     episode_reward = tf.Variable(0.)
-    tf.scalar_summary("Episode Reward", episode_reward)
+    tf.summary.scalar("Episode Reward", episode_reward)
     r_summary_placeholder = tf.placeholder("float")
     update_ep_reward = episode_reward.assign(r_summary_placeholder)
     ep_avg_v = tf.Variable(0.)
-    tf.scalar_summary("Episode Value", ep_avg_v)
+    tf.summary.scalar("Episode Value", ep_avg_v)
     val_summary_placeholder = tf.placeholder("float")
     update_ep_val = ep_avg_v.assign(val_summary_placeholder)
-    summary_op = tf.merge_all_summaries()
+    summary_op = tf.summary.merge_all()
     return r_summary_placeholder, update_ep_reward, val_summary_placeholder, update_ep_val, summary_op
 
 def train(session, graph_ops, saver):
@@ -191,7 +191,7 @@ def train(session, graph_ops, saver):
 
     # Initialize variables
     session.run(tf.initialize_all_variables())
-    writer = tf.train.SummaryWriter(SUMMARY_SAVE_PATH, session.graph)
+    writer = tf.summary.FileWriter(SUMMARY_SAVE_PATH, session.graph)
 
     # Start NUM_CONCURRENT training threads
     actor_learner_threads = [threading.Thread(target=actor_learner_thread, args=(thread_id, envs[thread_id], session, graph_ops, summary_ops, saver)) for thread_id in range(NUM_CONCURRENT)]
