@@ -20,7 +20,7 @@ flags.DEFINE_integer('resized_height', 84, 'Scale screen to this height.')
 flags.DEFINE_float('gamma', 0.99, 'Reward discount rate.')
 flags.DEFINE_float('learning_rate', 0.0001, 'Learning rate.')
 flags.DEFINE_integer('num_iterations', 25000000, 'Number of training timesteps.')
-flags.DEFINE_integer('batch_size', 32, 'Size of batch to update network')
+flags.DEFINE_integer('async_update', 32, 'Size of batch to update network')
 FLAGS = flags.FLAGS
 
 def main(_):
@@ -52,7 +52,7 @@ def main(_):
 							FLAGS.gamma, 
 							FLAGS.learning_rate, 
 							FLAGS.num_iterations, 
-							FLAGS.batch_size, 
+							FLAGS.async_update, 
 							num_actions, 
 							output_dir, 
 							1)

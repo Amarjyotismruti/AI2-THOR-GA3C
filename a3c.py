@@ -35,7 +35,7 @@ class A3CAgent:
                  gamma, 
                  learning_rate, 
                  num_iterations, 
-                 batch_size,
+                 async_update,
                  num_actions, 
                  output_dir,
                  max_grad):
@@ -49,7 +49,7 @@ class A3CAgent:
         self.gamma = gamma
         self.learning_rate = learning_rate
         self.num_iterations = num_iterations
-        self.batch_size = batch_size
+        self.async_update = async_update
         self.num_actions = num_actions
         self.output_dir = output_dir
         self.max_grad = max_grad
@@ -112,7 +112,7 @@ class A3CAgent:
             t = 0
             t_start = t
 
-            while not (terminal or ((t - t_start)  == self.batch_size)):
+            while not (terminal or ((t - t_start)  == self.async_update)):
                 # Perform action a_t according to policy pi(a_t | s_t)
                 probs = session.run(p_network, feed_dict={s: [s_t]})[0]
                 action_index = self.sample_policy_action(self.num_actions, probs)
