@@ -244,8 +244,8 @@ class A3CAgent:
                                                         graph_ops, \
                                                         summary_ops, \
                                                         saver)) for thread_id in range(self.num_concurrent)]
-        for t in actor_learner_threads:
-            t.start()
+        for thread in actor_learner_threads:
+            thread.start()
 
         # Show the agents training and write summary statistics
         last_summary_time = 0
@@ -258,8 +258,8 @@ class A3CAgent:
                 summary_str = session.run(summary_op)
                 writer.add_summary(summary_str, float(self.iteration))
                 last_summary_time = now
-        for t in actor_learner_threads:
-            t.join()
+        for thread in actor_learner_threads:
+            thread.join()
 
     def evaluation(self, monitor_env, session, graph_ops, saver):
         saver.restore(session, self.checkpoint_save_path)
