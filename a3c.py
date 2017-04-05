@@ -143,6 +143,9 @@ class A3CAgent:
             else:
                 R_t = session.run(v_network, feed_dict={s: [s_t]})[0][0] # Bootstrap from last state
 
+            ep_avg_v = ep_avg_v + R_t
+            v_steps = v_steps + 1
+
             R_batch = np.zeros(t)
             for i in reversed(range(t_start, t)):
                 R_batch[i] = past_rewards[i] + self.gamma * R_t
@@ -156,6 +159,8 @@ class A3CAgent:
 
             if terminal:
                 # Episode ended, collect stats and reset game
+                if v_steps > 0:
+                    session.run(update_ep_val, feed_dict={val_summary_placeholder: ep_avg_v/v_steps})
                 session.run(update_ep_reward, feed_dict={r_summary_placeholder: ep_reward})
                 print("THREAD:", num, "/ TIME", self.iteration, "/ REWARD", ep_reward)
                 s_t = env.get_initial_state()
@@ -163,6 +168,8 @@ class A3CAgent:
                 # Reset per-episode counters
                 ep_reward = 0
                 ep_t = 0
+                ep_avg_v = 0
+                v_steps = 0
 
     def compile(self, loss_func):
         # Create shared global policy and value networks
