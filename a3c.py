@@ -17,9 +17,9 @@ from atari_environment import AtariEnvironment
 
 # Path params
 EXPERIMENT_NAME = "breakout_a3c"
-SUMMARY_SAVE_PATH = "/Users/coreylynch/dev/async-rl/summaries/"+EXPERIMENT_NAME
-CHECKPOINT_SAVE_PATH = "/tmp/"+EXPERIMENT_NAME+".ckpt"
-CHECKPOINT_NAME = "/tmp/breakout_a3c.ckpt-5"
+SUMMARY_SAVE_PATH = "./logs/"+EXPERIMENT_NAME
+CHECKPOINT_SAVE_PATH = "./models/"+EXPERIMENT_NAME+".ckpt"
+CHECKPOINT_NAME = "./models/breakout_a3c.ckpt-5"
 CHECKPOINT_INTERVAL=5000
 SUMMARY_INTERVAL=5
 # TRAINING = False
