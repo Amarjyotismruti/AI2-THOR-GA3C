@@ -20,33 +20,9 @@ class A3CAgent:
     SUMMARY_SAVE_PATH = "./logs/%s" % EXPERIMENT_NAME
     CHECKPOINT_SAVE_PATH = "./models/%s.ckpt" % EXPERIMENT_NAME
     CHECKPOINT_NAME = "./models/%s.ckpt-5" % EXPERIMENT_NAME
-    CHECKPOINT_INTERVAL=5000
-    SUMMARY_INTERVAL=5
 
-    SHOW_TRAINING = True
-    # SHOW_TRAINING = False
-
-    # Experiment params
-    GAME = "Breakout-v0"
-    ACTIONS = 3
-    NUM_CONCURRENT = 8
-    NUM_EPISODES = 20000
-
-    AGENT_HISTORY_LENGTH = 4
-    RESIZED_WIDTH = 84
-    RESIZED_HEIGHT = 84
-
-    # DQN Params
-    GAMMA = 0.99
-
-    # Optimization Params
-    LEARNING_RATE = 0.00001
-
-    #Shared global parameters
-    T = 0
-    TMAX = 80000000
-    t_max = 32
-
+    iteration = 0
+    
     def __init__(self, 
                  model_name, 
                  checkpoint_interval, 
@@ -61,7 +37,19 @@ class A3CAgent:
                  num_iterations, 
                  batch_size,
                  num_actions):
-        pass
+        self.model_name = model_name
+        self.checkpoint_interval = checkpoint_interval
+        self.summary_interval = summary_interval
+        self.show_training = show_training
+        self.num_concurrent = num_concurrent
+        self.agent_history_length = agent_history_length
+        self.resized_width = resized_width
+        self.resized_height = resized_height
+        self.gamma = gamma
+        self.learning_rate = learning_rate
+        self.num_iterations = num_iterations
+        self.batch_size = batch_size
+        self.num_actions = num_actions
 
     def sample_policy_action(self, num_actions, probs):
         """
@@ -100,7 +88,7 @@ class A3CAgent:
         s_t = env.get_initial_state()
         terminal = False
 
-        while self.T < self.TMAX:
+        while self.iteration < self.num_iterations:
             s_batch = []
             past_rewards = []
             a_batch = []
@@ -108,11 +96,11 @@ class A3CAgent:
             t = 0
             t_start = t
 
-            while not (terminal or ((t - t_start)  == self.t_max)):
+            while not (terminal or ((t - t_start)  == self.batch_size)):
                 # Perform action a_t according to policy pi(a_t | s_t)
                 probs = session.run(p_network, feed_dict={s: [s_t]})[0]
-                action_index = self.sample_policy_action(self.ACTIONS, probs)
-                a_t = np.zeros([self.ACTIONS])
+                action_index = self.sample_policy_action(self.num_actions, probs)
+                a_t = np.zeros([self.num_actions])
                 a_t[action_index] = 1
 
                 if probs_summary_t % 100 == 0:
@@ -128,7 +116,7 @@ class A3CAgent:
                 past_rewards.append(r_t)
 
                 t += 1
-                self.T += 1
+                self.iteration += 1
                 ep_t += 1
                 probs_summary_t += 1
                 
@@ -141,7 +129,7 @@ class A3CAgent:
 
             R_batch = np.zeros(t)
             for i in reversed(range(t_start, t)):
-                R_t = past_rewards[i] + self.GAMMA * R_t
+                R_t = past_rewards[i] + self.gamma * R_t
                 R_batch[i] = R_t
 
             session.run(minimize, feed_dict={R : R_batch,
@@ -149,13 +137,13 @@ class A3CAgent:
                                              s : s_batch})
             
             # Save progress every 5000 iterations
-            if self.T % self.CHECKPOINT_INTERVAL == 0:
+            if self.iteration % self.checkpoint_interval == 0:
                 saver.save(session, CHECKPOINT_SAVE_PATH, global_step = T)
 
             if terminal:
                 # Episode ended, collect stats and reset game
                 session.run(update_ep_reward, feed_dict={r_summary_placeholder: ep_reward})
-                print("THREAD:", num, "/ TIME", self.T, "/ REWARD", ep_reward)
+                print("THREAD:", num, "/ TIME", self.iteration, "/ REWARD", ep_reward)
                 s_t = env.get_initial_state()
                 terminal = False
                 # Reset per-episode counters
@@ -168,17 +156,17 @@ class A3CAgent:
         p_network, \
         v_network, \
         p_params, \
-        v_params = build_policy_and_value_networks(num_actions=self.ACTIONS, \
-                                                   agent_history_length=self.AGENT_HISTORY_LENGTH, \
-                                                   resized_width=self.RESIZED_WIDTH, \
-                                                   resized_height=self.RESIZED_HEIGHT)
+        v_params = build_policy_and_value_networks(num_actions=self.num_actions, \
+                                                   agent_history_length=self.agent_history_length, \
+                                                   resized_width=self.resized_width, \
+                                                   resized_height=self.resized_height)
 
         # Shared global optimizer
-        optimizer = tf.train.AdamOptimizer(self.LEARNING_RATE)
+        optimizer = tf.train.AdamOptimizer(self.learning_rate)
 
         # Op for applying remote gradients
         R_t = tf.placeholder("float", [None])
-        a_t = tf.placeholder("float", [None, self.ACTIONS])
+        a_t = tf.placeholder("float", [None, self.num_actions])
         log_prob = tf.log(tf.reduce_sum(tf.multiply(p_network, a_t), reduction_indices=1))
         p_loss = -log_prob * (R_t - v_network)
         v_loss = tf.reduce_mean(tf.square(R_t - v_network))
@@ -213,27 +201,27 @@ class A3CAgent:
         session.run(tf.initialize_all_variables())
         writer = tf.summary.FileWriter(self.SUMMARY_SAVE_PATH, session.graph)
 
-        # Start NUM_CONCURRENT training threads
+        # Start num_concurrent training threads
         actor_learner_threads = [threading.Thread(target=self.actor_learner_thread, \
                                                   args=(thread_id, \
                                                         envs[thread_id], \
                                                         session, \
                                                         graph_ops, \
                                                         summary_ops, \
-                                                        saver)) for thread_id in range(self.NUM_CONCURRENT)]
+                                                        saver)) for thread_id in range(self.num_concurrent)]
         for t in actor_learner_threads:
             t.start()
 
         # Show the agents training and write summary statistics
         last_summary_time = 0
         while True:
-            if self.SHOW_TRAINING:
+            if self.show_training:
                 for env in envs:
                     env.env.render()
             now = time.time()
-            if now - last_summary_time > self.SUMMARY_INTERVAL:
+            if now - last_summary_time > self.summary_interval:
                 summary_str = session.run(summary_op)
-                writer.add_summary(summary_str, float(self.T))
+                writer.add_summary(summary_str, float(self.iteration))
                 last_summary_time = now
         for t in actor_learner_threads:
             t.join()
@@ -254,7 +242,7 @@ class A3CAgent:
                 monitor_env.env.render()
                 # Forward the deep q network, get Q(s,a) values
                 probs = p_network.eval(session = session, feed_dict = {s : [s_t]})[0]
-                action_index = self.sample_policy_action(self.ACTIONS, probs)
+                action_index = self.sample_policy_action(self.num_actions, probs)
                 s_t1, r_t, terminal, info = env.step(action_index)
                 s_t = s_t1
                 ep_reward += r_t
