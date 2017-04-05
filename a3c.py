@@ -16,7 +16,6 @@ from keras import backend as K
 import os
 
 class A3CAgent:
-    # Path params
     summary_save_path = "./%s/logs"
     model_save_path = "./%s/models"
     checkpoint_name = "%s.ckpt"
@@ -72,8 +71,6 @@ class A3CAgent:
         Sample an action from an action probability distribution output by
         the policy network.
         """
-        # Subtract a tiny value from probabilities in order to avoid
-        # "ValueError: sum(pvals[:-1]) > 1.0" in numpy.multinomial
         probs = probs - np.finfo(np.float32).epsneg
 
         histogram = np.random.multinomial(1, probs)
@@ -81,10 +78,8 @@ class A3CAgent:
         return action
 
     def actor_learner_thread(self, num, env, session, graph_ops, summary_ops, saver):
-        # Unpack graph ops
         state_input, action_input, target_input, minimize, p_network, v_network = graph_ops
 
-        # Unpack tensorboard summary stuff
         r_summary_placeholder, \
         update_ep_reward, \
         val_summary_placeholder, \
@@ -95,7 +90,6 @@ class A3CAgent:
 
         time.sleep(5*num)
 
-        # Set up per-episode counters
         ep_reward = 0
         ep_avg_v = 0
         ep_max_p = 0
@@ -113,7 +107,6 @@ class A3CAgent:
             async_update_count = 0
 
             while not (terminal or async_update_count  == self.async_update):
-                # Perform action according to policy pi(action | state)
                 probs = session.run(p_network, feed_dict={state_input: [state]})[0]
                 action = self.sample_policy_action(self.num_actions, probs)
                 action_mask = np.zeros([self.num_actions])
@@ -140,7 +133,7 @@ class A3CAgent:
             if terminal:
                 target = 0
             else:
-                target = session.run(v_network, feed_dict={state_input: [state]})[0][0] # Bootstrap from last state
+                target = session.run(v_network, feed_dict={state_input: [state]})[0][0]
 
             ep_avg_v = ep_avg_v + target
             v_steps = v_steps + 1
@@ -157,7 +150,6 @@ class A3CAgent:
                 saver.save(session, self.checkpoint_save_path)
 
             if terminal:
-                # Episode ended, collect stats and reset game
                 if v_steps > 0:
                     session.run(update_ep_val, feed_dict={val_summary_placeholder: ep_avg_v/v_steps})
                 if ep_iters > 0:
@@ -166,7 +158,6 @@ class A3CAgent:
                 print("THREAD:", num, "/ TIME", self.iteration, "/ REWARD", ep_reward)
                 state = env.get_initial_state()
                 terminal = False
-                # Reset per-episode counters
                 ep_reward = 0
                 ep_iters = 0
                 ep_avg_v = 0
@@ -174,7 +165,6 @@ class A3CAgent:
                 ep_max_p = 0
 
     def compile(self, loss_func):
-        # Create shared global policy and value networks
         state, \
         p_network, \
         v_network, \
@@ -184,10 +174,8 @@ class A3CAgent:
                                                    input_shape=self.input_shape, \
                                                    window=self.agent_history_length)
 
-        # Shared global optimizer
         optimizer = tf.train.AdamOptimizer(self.learning_rate)
 
-        # Op for applying remote gradients
         target = tf.placeholder("float", [None])
         action_mask = tf.placeholder("float", [None, self.num_actions])
 
@@ -201,7 +189,6 @@ class A3CAgent:
         
         return state, action_mask, target, minimize, p_network, v_network
 
-    # Set up some episode summary ops to visualize on tensorboard.
     def setup_summaries(self):
         episode_reward = tf.Variable(0.)
         tf.summary.scalar("Episode Reward", episode_reward)
@@ -231,11 +218,9 @@ class A3CAgent:
         summary_ops = self.setup_summaries()
         summary_op = summary_ops[-1]
 
-        # Initialize variables
         session.run(tf.global_variables_initializer())
         writer = tf.summary.FileWriter(self.summary_save_path, session.graph)
 
-        # Start num_concurrent training threads
         actor_learner_threads = [threading.Thread(target=self.actor_learner_thread, \
                                                   args=(thread_id, \
                                                         envs[thread_id], \
@@ -246,7 +231,6 @@ class A3CAgent:
         for thread in actor_learner_threads:
             thread.start()
 
-        # Show the agents training and write summary statistics
         last_summary_time = 0
         while True:
             if self.show_training:
@@ -265,7 +249,6 @@ class A3CAgent:
         print("Restored model weights from ", self.checkpoint_save_path)
         monitor_env.monitor.start(self.video_save_path)
 
-        # Unpack graph ops
         state_input, action_mask, target, minimize, p_network, v_network = graph_ops
 
         for i_episode in range(100):
@@ -274,7 +257,6 @@ class A3CAgent:
             terminal = False
             while not terminal:
                 monitor_env.render()
-                # Forward the deep q network, get Q(s,a) values
                 probs = p_network.eval(session = session, feed_dict = {state_input: [state]})[0]
                 action = self.sample_policy_action(self.num_actions, probs)
                 next_state, r_t, terminal, info = env.step(action)
