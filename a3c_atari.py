@@ -42,20 +42,20 @@ def main(_):
 	with tf.Graph().as_default(), tf.Session() as session:
 		K.set_session(session)
 
-		a3cAgent = A3CAgent(FLAGS.model, 
-							FLAGS.checkpoint_interval, 
-							FLAGS.summary_interval, 
-							FLAGS.show_training, 
-							FLAGS.num_concurrent, 
-							FLAGS.agent_history_length, 
-							input_shape,
-							FLAGS.gamma, 
-							FLAGS.learning_rate, 
-							FLAGS.num_iterations, 
-							FLAGS.async_update, 
-							num_actions, 
-							output_dir, 
-							1)
+		a3cAgent = A3CAgent(model_name=FLAGS.model, 
+							checkpoint_interval=FLAGS.checkpoint_interval, 
+							summary_interval=FLAGS.summary_interval, 
+							show_training=FLAGS.show_training, 
+							num_concurrent=FLAGS.num_concurrent, 
+							agent_history_length=FLAGS.agent_history_length, 
+							input_shape=input_shape, 
+							gamma=FLAGS.gamma, 
+							learning_rate=FLAGS.learning_rate, 
+							num_iterations=FLAGS.num_iterations, 
+							async_update=FLAGS.async_update, 
+							num_actions=num_actions, 
+							output_dir=output_dir, 
+							max_grad=1.)
 		graph_ops = a3cAgent.compile(mean_huber_loss)
 		saver = tf.train.Saver()
 
