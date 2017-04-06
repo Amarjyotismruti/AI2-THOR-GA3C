@@ -10,7 +10,7 @@ class Environment(object):
     def reset(self):
         NotImplementedError
 
-    def get_preprocessed_frame(self):
+    def get_preprocessed_state(self):
         NotImplementedError
 
     def step(self):
