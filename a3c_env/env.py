@@ -15,3 +15,6 @@ class Environment(object):
 
     def step(self):
         NotImplementedError
+
+    def render(self):
+        NotImplementedError
