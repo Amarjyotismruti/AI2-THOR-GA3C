@@ -2,7 +2,7 @@ import tensorflow as tf
 import keras.backend as K
 from a3c import A3CAgent
 import gym
-from a3c_env.thor_env import THORenv
+from a3c_env.cartpole_env import CartPoleEnvironment
 from utils import get_output_folder, mean_huber_loss
 import numpy as np
 
@@ -31,8 +31,8 @@ def main(_):
 		FLAGS.num_concurrent = 1
 		
 	# Set up game environments (one per thread)
-	envs = [THORenv() for _ in range(FLAGS.num_concurrent)]
-	# envs = [CartPoleEnvironment(gym_env=env) for env in envs]
+	envs = [gym.make(FLAGS.env) for _ in range(FLAGS.num_concurrent)]
+	envs = [CartPoleEnvironment(gym_env=env) for env in envs]
 
 	num_actions = envs[0].env.action_space.n
 	input_shape = envs[0].env.observation_space.shape
