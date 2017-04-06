@@ -2,8 +2,8 @@ import tensorflow as tf
 import keras.backend as K
 from a3c.a3c_agent import A3CAgent
 import gym
-from a3c_env.cartpole_env import CartPoleEnvironment
-from utils import get_output_folder, mean_huber_loss
+from a3c.env.cartpole_env import CartPoleEnvironment
+from a3c.utils import get_output_folder, mean_huber_loss
 import numpy as np
 
 flags = tf.app.flags

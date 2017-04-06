@@ -2,8 +2,8 @@ import tensorflow as tf
 import keras.backend as K
 from a3c.a3c_agent import A3CAgent
 import gym
-from a3c_env.atari_env import AtariEnvironment
-from utils import get_output_folder, mean_huber_loss
+from a3c.env.atari_env import AtariEnvironment
+from a3c.utils import get_output_folder, mean_huber_loss
 
 flags = tf.app.flags
 flags.DEFINE_string('output', 'atari-v0', 'Name of the output folder')
