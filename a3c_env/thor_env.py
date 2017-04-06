@@ -44,7 +44,7 @@ class THORenv(Env):
 		self.env_thor = robosims.server.Controller(
         						player_screen_width=800,
         						player_screen_height=800,
-        						linux_build='/home/dinesh/DeepRL/THOR/dataset/thor-cmu-201703101558-Linux64',
+        						linux_build='/home/amar/RL-assignment/DRL-project/thor-cmu-201703101558-Linux64',
         						x_display="0.0")
 		self.actions = ['MoveAhead', 'MoveBack', 'MoveRight', 'MoveLeft', 'RotateLeft', 'RotateRight', 'LookUp', 'LookDown']
 		self.floor_name=floor_name
@@ -57,8 +57,12 @@ class THORenv(Env):
 
 
  	def reset(self):
-		self.env_thor.reset(self.floor_name)
-
+		event=self.env_thor.reset(self.floor_name)
+		obs=np.array(event.frame)
+		obs=Image.fromarray(np.uint8(obs))
+		obs=obs.resize((224,224))
+		obs=np.expand_dims(np.array(obs), axis=0)
+		return obs
 
 	def step(self, action):
 
@@ -67,12 +71,13 @@ class THORenv(Env):
 		obs=np.array(event.frame)
 		obs=Image.fromarray(np.uint8(obs))
 		obs=obs.resize((224,224))
+		obs=np.expand_dims(np.array(obs), axis=0)
 
 		if event.metadata['objects'][4]['visible']:
 			reward=10
 			terminal=True
 
-		return (np.array(obs),reward,terminal,0)
+		return (obs,reward,terminal,0)
 
 	def stop(self):
 
