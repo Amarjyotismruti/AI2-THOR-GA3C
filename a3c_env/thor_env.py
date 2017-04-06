@@ -41,27 +41,28 @@ class THORenv(Env):
 	def __init__(self, floor_name='FloorPlan225'):
 
 		#Change the linux_build path to the thor data file path.
-		self.env = robosims.server.Controller(
-        player_screen_width=800,
-        player_screen_height=800,
-        linux_build='/home/amar/RL-assignment/DRL-project/thor-cmu-201703101558-Linux64',
-        x_display="0.0")
+		self.env_thor = robosims.server.Controller(
+        						player_screen_width=800,
+        						player_screen_height=800,
+        						linux_build='/home/dinesh/DeepRL/THOR/dataset/thor-cmu-201703101558-Linux64',
+        						x_display="0.0")
 		self.actions = ['MoveAhead', 'MoveBack', 'MoveRight', 'MoveLeft', 'RotateLeft', 'RotateRight', 'LookUp', 'LookDown']
 		self.floor_name=floor_name
 		self.start_unity=False
 		self.nS=10000
+		self.observation_space = (224,224,3)
 		self.nA=8
 		self.action_space=spaces.Discrete(self.nA)
-		self.env.start()
+		self.env_thor.start()
 
 
  	def reset(self):
-		self.env.reset(self.floor_name)
+		self.env_thor.reset(self.floor_name)
 
 
 	def step(self, action):
 
-		event=self.env.step(dict(action=self.actions[action]))
+		event=self.env_thor.step(dict(action=self.actions[action]))
 		reward,terminal=-1,False
 		obs=np.array(event.frame)
 		obs=Image.fromarray(np.uint8(obs))
@@ -75,7 +76,7 @@ class THORenv(Env):
 
 	def stop(self):
 
-		self.env.stop()
+		self.env_thor.stop()
 
 	def render(self):
 
