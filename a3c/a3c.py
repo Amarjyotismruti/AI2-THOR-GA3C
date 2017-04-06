@@ -11,7 +11,7 @@ import gym
 from keras import backend as K
 from keras.layers import Convolution2D, Flatten, Dense
 from collections import deque
-from a3c_model import build_policy_and_value_networks
+from model.model import build_policy_and_value_networks
 from keras import backend as K
 import os
 
@@ -69,7 +69,6 @@ class A3CAgent:
     def sample_policy_action(self, num_actions, probs):
         probs = probs - np.finfo(np.float32).epsneg
         histogram = np.random.multinomial(1, probs)
-        #print "Probs", probs
         action = int(np.nonzero(histogram)[0])
         return action
 
