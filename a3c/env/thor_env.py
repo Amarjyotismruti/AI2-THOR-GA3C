@@ -44,7 +44,8 @@ class THORenv(Env):
 		self.env_thor = robosims.server.Controller(
         						player_screen_width=800,
         						player_screen_height=800,
-        						linux_build='/home/amar/RL-assignment/DRL-project/thor-cmu-201703101558-Linux64',
+        						darwin_build='./thor-cmu-201703101557-OSXIntel64.app/Contents/MacOS/thor-cmu-201703101557-OSXIntel64',
+        						linux_build='./thor-cmu-201703101558-Linux64',
         						x_display="0.0")
 		self.actions = ['MoveAhead', 'MoveBack', 'MoveRight', 'MoveLeft', 'RotateLeft', 'RotateRight', 'LookUp', 'LookDown']
 		self.floor_name=floor_name
