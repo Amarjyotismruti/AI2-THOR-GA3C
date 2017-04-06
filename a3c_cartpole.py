@@ -39,8 +39,7 @@ def main(_):
 
 	with tf.Graph().as_default(), tf.Session() as session:
 		K.set_session(session)
-		saver = tf.train.Saver()
-		
+
 		a3cAgent = A3CAgent(model_name=FLAGS.model, 
 							checkpoint_interval=FLAGS.checkpoint_interval, 
 							summary_interval=FLAGS.summary_interval, 
@@ -56,6 +55,7 @@ def main(_):
 							output_dir=output_dir, 
 							max_grad=np.inf)
 		a3cAgent.compile(mean_huber_loss)
+		saver = tf.train.Saver()
 
 		if FLAGS.testing:
 			a3cAgent.evaluation(envs[0], session, saver)
