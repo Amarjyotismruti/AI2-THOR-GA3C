@@ -69,6 +69,7 @@ class A3CAgent:
     def sample_policy_action(self, num_actions, probs):
         probs = probs - np.finfo(np.float32).epsneg
         histogram = np.random.multinomial(1, probs)
+        #print "Probs", probs
         action = int(np.nonzero(histogram)[0])
         return action
 

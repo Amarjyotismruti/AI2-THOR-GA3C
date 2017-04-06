@@ -38,7 +38,7 @@ from PIL import Image
 
 class THORenv(Env):
 
-	def __init__(self, floor_name='FloorPlan225'):
+	def __init__(self, floor_name='FloorPlan223'):
 
 		#Change the linux_build path to the thor data file path.
 		self.env_thor = robosims.server.Controller(
@@ -61,18 +61,19 @@ class THORenv(Env):
 		obs=np.array(event.frame)
 		obs=Image.fromarray(np.uint8(obs))
 		obs=obs.resize((224,224))
-		obs=np.expand_dims(np.array(obs), axis=0)
-		return obs
+		#obs=np.expand_dims(np.array(obs), axis=0)
+		return np.float32(obs)/255
 
 	def step(self, action):
 
 		event=self.env_thor.step(dict(action=self.actions[action]))
-		reward,terminal=-1,False
+		reward,terminal=0,False
 		obs=np.array(event.frame)
 		obs=Image.fromarray(np.uint8(obs))
-		obs=obs.resize((224,224))
-		obs=np.expand_dims(np.array(obs), axis=0)
-
+		obs=np.float32(obs.resize((224,224)))/255
+		
+		#obs=np.expand_dims(np.array(obs), axis=0)
+		# print event.metadata['objects'][4]
 		if event.metadata['objects'][4]['visible']:
 			reward=10
 			terminal=True

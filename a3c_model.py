@@ -13,9 +13,9 @@ def build_policy_and_value_networks(model_name, num_actions, input_shape, window
 
 def build_a3c_networks(num_actions, window, input_shape):
     with tf.device("/cpu:0"):
-        state = tf.placeholder("float", [None, window] + list(input_shape))
+        state = tf.placeholder("float", [None] + list(input_shape))
         
-        inputs = Input(shape=(window,)+input_shape)
+        inputs = Input(shape=input_shape)
         shared = Convolution2D(name="conv1", nb_filter=16, nb_row=8, nb_col=8, subsample=(4,4), activation='relu', border_mode='same')(inputs)
         shared = Convolution2D(name="conv2", nb_filter=32, nb_row=4, nb_col=4, subsample=(2,2), activation='relu', border_mode='same')(shared)
         shared = Flatten()(shared)
