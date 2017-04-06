@@ -1,1 +1,4 @@
 *.pyc
+atari-v0/
+logs/
+models/
