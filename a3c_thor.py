@@ -34,8 +34,8 @@ def main(_):
 	envs = [THORenv() for _ in range(FLAGS.num_concurrent)]
 	# envs = [CartPoleEnvironment(gym_env=env) for env in envs]
 
-	num_actions = envs[0].env.action_space.n
-	input_shape = envs[0].env.observation_space.shape
+	num_actions = envs[0].action_space.n
+	input_shape = envs[0].observation_space
 
 	with tf.Graph().as_default(), tf.Session() as session:
 		K.set_session(session)
