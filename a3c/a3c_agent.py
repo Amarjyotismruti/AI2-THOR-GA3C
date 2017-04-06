@@ -11,7 +11,6 @@ import gym
 from keras import backend as K
 from keras.layers import Convolution2D, Flatten, Dense
 from collections import deque
-from model.model import build_policy_and_value_networks
 from keras import backend as K
 import os
 import sys

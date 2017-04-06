@@ -1,6 +1,4 @@
 import tensorflow as tf
-import sys
-sys.path.append("/home/amar/Keras-1.2.2")
 import keras.backend as K
 from a3c.a3c_agent import A3CAgent
 import gym
