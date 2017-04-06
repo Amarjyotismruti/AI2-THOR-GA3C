@@ -3,3 +3,8 @@ tensorflow
 scikit-image
 gym
 gym[atari]
+h5py
+matplotlib
+numpy
+pillow
+scipy
