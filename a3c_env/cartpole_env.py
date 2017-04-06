@@ -6,7 +6,7 @@ class CartPoleEnvironment(Environment):
         self.env = gym_env
         self.gym_actions = range(gym_env.action_space.n)
 
-    def get_initial_state(self):
+    def reset(self):
         state = self.env.reset()
         return np.array([state])
 

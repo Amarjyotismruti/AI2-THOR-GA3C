@@ -7,7 +7,7 @@ class Environment(object):
     def __init__(self):
         NotImplementedError
 
-    def get_initial_state(self):
+    def reset(self):
         NotImplementedError
 
     def get_preprocessed_frame(self):

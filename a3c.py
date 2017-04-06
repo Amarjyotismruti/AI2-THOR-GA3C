@@ -91,7 +91,7 @@ class A3CAgent:
         v_steps = 0
         ep_iters = 0
 
-        state = env.get_initial_state()
+        state = env.reset()
         terminal = False
 
         while self.iteration < self.num_iterations:
@@ -149,7 +149,7 @@ class A3CAgent:
                     session.run(update_ep_pol, feed_dict={pol_summary_placeholder: ep_max_p/ep_iters})
                 session.run(update_ep_reward, feed_dict={r_summary_placeholder: ep_reward})
                 print('THREAD:', num, '/ TIME', self.iteration, '/ REWARD', ep_reward)
-                state = env.get_initial_state()
+                state = env.reset()
                 terminal = False
                 ep_reward = 0
                 ep_iters = 0
@@ -245,7 +245,7 @@ class A3CAgent:
         state_input, action_mask, target, minimize, p_network, v_network = self.model
 
         for i_episode in range(100):
-            state = env.get_initial_state()
+            state = env.reset()
             ep_reward = 0
             terminal = False
             while not terminal:
