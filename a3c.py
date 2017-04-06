@@ -16,10 +16,10 @@ from keras import backend as K
 import os
 
 class A3CAgent:
-    summary_save_path = "./%s/logs"
-    model_save_path = "./%s/models"
-    checkpoint_name = "%s.ckpt"
-    video_save_path = "./%s/video"
+    summary_save_path = './%s/logs'
+    model_save_path = './%s/models'
+    checkpoint_name = '%s.ckpt'
+    video_save_path = './%s/video'
 
     iteration = 0
     
@@ -148,7 +148,7 @@ class A3CAgent:
                 if ep_iters > 0:
                     session.run(update_ep_pol, feed_dict={pol_summary_placeholder: ep_max_p/ep_iters})
                 session.run(update_ep_reward, feed_dict={r_summary_placeholder: ep_reward})
-                print("THREAD:", num, "/ TIME", self.iteration, "/ REWARD", ep_reward)
+                print('THREAD:', num, '/ TIME', self.iteration, '/ REWARD', ep_reward)
                 state = env.get_initial_state()
                 terminal = False
                 ep_reward = 0
@@ -169,8 +169,8 @@ class A3CAgent:
 
         optimizer = tf.train.AdamOptimizer(self.learning_rate)
 
-        target = tf.placeholder("float", [None])
-        action_mask = tf.placeholder("float", [None, self.num_actions])
+        target = tf.placeholder('float', [None])
+        action_mask = tf.placeholder('float', [None, self.num_actions])
 
         v_network_flat = tf.reshape(v_network, shape=[-1]);
         p_network_masked = tf.reduce_sum(tf.multiply(p_network, action_mask), reduction_indices=1)
@@ -184,18 +184,18 @@ class A3CAgent:
 
     def setup_summaries(self):
         episode_reward = tf.Variable(0.)
-        tf.summary.scalar("Episode Reward", episode_reward)
-        r_summary_placeholder = tf.placeholder("float")
+        tf.summary.scalar('Episode Reward', episode_reward)
+        r_summary_placeholder = tf.placeholder('float')
         update_ep_reward = episode_reward.assign(r_summary_placeholder)
         
         ep_avg_v = tf.Variable(0.)
-        tf.summary.scalar("Episode Value", ep_avg_v)
-        val_summary_placeholder = tf.placeholder("float")
+        tf.summary.scalar('Episode Value', ep_avg_v)
+        val_summary_placeholder = tf.placeholder('float')
         update_ep_val = ep_avg_v.assign(val_summary_placeholder)
 
         ep_max_p = tf.Variable(0.)
-        tf.summary.scalar("Episode Max Policy", ep_max_p)
-        pol_summary_placeholder = tf.placeholder("float")
+        tf.summary.scalar('Episode Max Policy', ep_max_p)
+        pol_summary_placeholder = tf.placeholder('float')
         update_ep_pol = ep_max_p.assign(pol_summary_placeholder)
 
         summary_op = tf.summary.merge_all()
@@ -239,7 +239,7 @@ class A3CAgent:
 
     def evaluation(self, monitor_env, session, saver):
         saver.restore(session, self.checkpoint_save_path)
-        print("Restored model weights from ", self.checkpoint_save_path)
+        print('Restored model weights from ', self.checkpoint_save_path)
         monitor_env.monitor.start(self.video_save_path)
 
         state_input, action_mask, target, minimize, p_network, v_network = self.model
