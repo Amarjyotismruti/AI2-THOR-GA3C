@@ -3,7 +3,11 @@ from skimage.transform import resize
 from skimage.color import rgb2gray
 import numpy as np
 from collections import deque
-from env import Environment
+import sys
+if sys.version_info[0] == 2:
+    from env import Environment
+else:
+    from a3c.env.env import Environment
 
 class AtariEnvironment(Environment):
     """

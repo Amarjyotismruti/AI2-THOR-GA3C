@@ -1,5 +1,9 @@
 import numpy as np
-from env import Environment
+import sys
+if sys.version_info[0] == 2:
+    from env import Environment
+else:
+    from a3c.env.env import Environment
 
 class CartPoleEnvironment(Environment):
     def __init__(self, gym_env):
