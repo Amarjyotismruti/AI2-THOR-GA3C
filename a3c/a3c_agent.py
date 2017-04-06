@@ -83,8 +83,6 @@ class A3CAgent:
         update_ep_pol, \
         summary_op = summary_ops
 
-        time.sleep(5*num)
-
         ep_reward = 0
         ep_avg_v = 0
         ep_max_p = 0

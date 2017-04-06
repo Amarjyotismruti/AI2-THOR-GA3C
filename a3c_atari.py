@@ -1,6 +1,6 @@
 import tensorflow as tf
 import keras.backend as K
-from a3c import A3CAgent
+from a3c.a3c_agent import A3CAgent
 import gym
 from a3c_env.atari_env import AtariEnvironment
 from utils import get_output_folder, mean_huber_loss
