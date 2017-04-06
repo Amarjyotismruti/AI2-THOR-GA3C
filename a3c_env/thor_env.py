@@ -1,4 +1,4 @@
-from gym import Env
+from gym import Env, spaces
 import robosims.server
 import numpy as np
 from PIL import Image
@@ -49,10 +49,10 @@ class THORenv(Env):
 		self.actions = ['MoveAhead', 'MoveBack', 'MoveRight', 'MoveLeft', 'RotateLeft', 'RotateRight', 'LookUp', 'LookDown']
 		self.floor_name=floor_name
 		self.start_unity=False
-	
-	def start(self):
-
-		self.env.start(start_unity=self.start_unity)
+		self.nS=10000
+		self.nA=8
+		self.action_space=spaces.Discrete(self.nA)
+		self.env.start()
 
 
  	def reset(self):
@@ -71,7 +71,7 @@ class THORenv(Env):
 			reward=10
 			terminal=True
 
-		return (obs,reward,terminal)
+		return (np.array(obs),reward,terminal,0)
 
 	def stop(self):
 
