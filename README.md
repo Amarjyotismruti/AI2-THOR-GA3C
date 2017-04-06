@@ -1,4 +1,5 @@
-# A3C - Asynchronous Methods for Deep Reinforcement Learning
+# THOR Challenge
+http://vuchallenge.org/thor.html
 
 ## Requirements
 * keras
