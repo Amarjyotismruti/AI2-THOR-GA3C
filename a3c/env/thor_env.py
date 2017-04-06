@@ -55,8 +55,7 @@ class THORenv(Env):
 		self.action_space=spaces.Discrete(self.nA)
 		self.env_thor.start()
 
-
- 	def reset(self):
+	def reset(self):
 		event=self.env_thor.reset(self.floor_name)
 		obs=np.array(event.frame)
 		obs=Image.fromarray(np.uint8(obs))
