@@ -32,7 +32,6 @@ import time
 
 from ga3c.Config import Config
 from ga3c.Experience import Experience
-from ga3c.env.THOREnvironment import THOREnvironment
 
 class ProcessAgent(Process):
     def __init__(self, environment, id, prediction_q, training_q, episode_log_q):
@@ -44,8 +43,6 @@ class ProcessAgent(Process):
         self.episode_log_q = episode_log_q
 
         self.env = environment()
-        if type(self.env) == THOREnvironment:
-            self.env.start()
         self.num_actions = self.env.get_num_actions()
         self.actions = np.arange(self.num_actions)
 
