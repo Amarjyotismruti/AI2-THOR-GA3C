@@ -13,5 +13,5 @@ class Environment:
     def step(self, action):
         pass
 
-    def start(self)
+    def start(self):
         pass
