@@ -93,7 +93,7 @@ class CartPoleNetwork(Network):
             summaries.append(tf.summary.histogram("weights_%s" % var.name, var))
 
         self.summary_op = tf.summary.merge(summaries)
-        self.log_writer = tf.summary.FileWriter("logs/%s" % self.model_name, self.sess.graph)
+        self.log_writer = tf.summary.FileWriter("./logs/%s" % self.model_name, self.sess.graph)
 
     def __get_base_feed_dict(self):
         return {self.var_learning_rate: self.learning_rate}
