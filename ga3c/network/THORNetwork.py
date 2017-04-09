@@ -45,7 +45,7 @@ class THORNetwork(Network):
 
     def _create_graph(self):
         self.x = tf.placeholder(
-            tf.float32, [None, 1, self.img_width, self.img_channels], name='X')
+            tf.float32, [None, self.img_width, self.img_height, 3], name='X')
         self.y_r = tf.placeholder(tf.float32, [None], name='Yr')
 
         self.var_learning_rate = tf.placeholder(tf.float32, name='lr', shape=[])
@@ -55,7 +55,7 @@ class THORNetwork(Network):
         self.action_index = tf.placeholder(tf.float32, [None, self.num_actions])
 
         # As implemented in A3C paper
-        inputs = Input(shape=(1, self.img_width, self.img_channels))
+        inputs = Input(shape=(self.img_width, self.img_height, 3))
         shared = Convolution2D(name="conv1", nb_filter=16, nb_row=8, nb_col=8, subsample=(4,4), activation='relu', border_mode='same')(inputs)
         shared = Convolution2D(name="conv2", nb_filter=32, nb_row=4, nb_col=4, subsample=(2,2), activation='relu', border_mode='same')(shared)
         shared = Flatten()(shared)
@@ -96,7 +96,7 @@ class THORNetwork(Network):
         self.log_writer = tf.summary.FileWriter("./logs/%s" % self.model_name, self.sess.graph)
 
     def __get_base_feed_dict(self):
-        return {self.var_beta: self.beta, self.var_learning_rate: self.learning_rate}
+        return {self.var_learning_rate: self.learning_rate}
 
     def get_global_step(self):
         step = self.sess.run(self.global_step)
