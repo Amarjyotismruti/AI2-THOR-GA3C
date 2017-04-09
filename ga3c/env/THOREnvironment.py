@@ -19,10 +19,12 @@ class THOREnvironment(Environment):
         self.start_unity=Config.PLAY_MODE
         self.observation_space = (224,224,3)
         self.nA=len(self.actions)
-        self.env_thor.start()
-        
+
         self.previous_state = None
         self.current_state = None
+
+    def start(self):
+        self.env_thor.start()
 
     def get_num_actions(self):
         return self.nA
@@ -51,4 +53,4 @@ class THOREnvironment(Environment):
         self.previous_state = self.current_state
         self.current_state = obs
 
-        return (obs,reward,terminal,0)
+        return reward,terminal

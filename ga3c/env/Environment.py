@@ -12,3 +12,6 @@ class Environment:
 
     def step(self, action):
         pass
+
+    def start(self)
+        pass
