@@ -59,7 +59,7 @@ Config.TMAX = 4
 Config.EPISODES = 3000
 
 Config.TENSORBOARD = True
-Config.TENSORBOARD_UPDATE_FREQUENCY = 1
+Config.TENSORBOARD_UPDATE_FREQUENCY = 1000
 
 gym.undo_logger_setup()
 
