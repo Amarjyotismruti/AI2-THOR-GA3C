@@ -117,11 +117,19 @@ class THORNetwork(Network):
         return self.sess.run([self.softmax_p, self.logits_v], feed_dict={self.x: x})
     
     def train(self, x, y_r, a, trainer_id):
+        if y_r.ndim == 2 and y_r.shape[0] > 1 and y_r.shape[1] == 1:
+            y_r = np.squeeze(y_r)
+        elif y_r.ndim == 2 and y_r.shape == (1,1):
+            y_r = y_r[0]
         feed_dict = self.__get_base_feed_dict()
         feed_dict.update({self.x: x, self.y_r: y_r, self.action_index: a})
         self.sess.run(self.train_op, feed_dict=feed_dict)
 
     def log(self, x, y_r, a):
+        if y_r.ndim == 2 and y_r.shape[0] > 1 and y_r.shape[1] == 1:
+            y_r = np.squeeze(y_r)
+        elif y_r.ndim == 2 and y_r.shape == (1,1):
+            y_r = y_r[0]
         feed_dict = self.__get_base_feed_dict()
         feed_dict.update({self.x: x, self.y_r: y_r, self.action_index: a})
         step, summary = self.sess.run([self.global_step, self.summary_op], feed_dict=feed_dict)
