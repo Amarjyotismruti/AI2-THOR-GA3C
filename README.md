@@ -2,10 +2,11 @@
 http://vuchallenge.org/thor.html
 
 ## Requirements
-* keras
-* tensorflow
-* scikit-image
-* gym
+* python 3.4.2
+* keras 2.0.2
+* tensorflow 1.0.1
+* scikit-image 0.13.0
+* gym 0.8.1
 
 ## How to run
 ```
