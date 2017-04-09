@@ -50,9 +50,9 @@ Config.PREDICTORS = 1
 Config.TRAINERS = 1
 Config.DYNAMIC_SETTINGS = False
 
-Config.STACKED_FRAMES = 1
-Config.IMAGE_WIDTH = 4
-Config.IMAGE_HEIGHT = 1
+Config.STACKED_FRAMES = 3
+Config.IMAGE_WIDTH = 224
+Config.IMAGE_HEIGHT = 224
 
 Config.GREEDY_POLICY = False
 Config.TMAX = 4
