@@ -24,7 +24,7 @@ class THOREnvironment(Environment):
         self.current_state = None
 
     def start(self):
-        self.env_thor.start()
+        self.env_thor.start(start_unity=self.start_unity)
 
     def get_num_actions(self):
         return self.nA
