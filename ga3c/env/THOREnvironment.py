@@ -16,7 +16,7 @@ class THOREnvironment(Environment):
                                 x_display="0.0")
         self.actions = ['MoveAhead', 'MoveBack', 'MoveRight', 'MoveLeft', 'RotateLeft', 'RotateRight', 'LookUp', 'LookDown']
         self.floor_name=floor_name
-        self.start_unity=Config.PLAY_MODE
+        self.start_unity=True
         self.observation_space = (224,224,3)
         self.nA=len(self.actions)
 
