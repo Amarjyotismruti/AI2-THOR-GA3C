@@ -1,11 +1,10 @@
 from ga3c.Config import Config
 from ga3c.GameManager import GameManager
-from ga3c.env.Environment import Environment
 import numpy as np
 import robosims.server
 from PIL import Image
 
-class THOREnvironment(Environment):
+class THOREnvironment():
     def __init__(self, floor_name='FloorPlan223'):
         #Change the linux_build path to the thor data file path.
         self.env_thor = robosims.server.Controller(
