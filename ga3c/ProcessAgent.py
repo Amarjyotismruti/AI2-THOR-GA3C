@@ -32,6 +32,7 @@ import time
 
 from ga3c.Config import Config
 from ga3c.Experience import Experience
+from ga3c.Policy import LinearDecayGreedyEpsilonPolicy
 
 class ProcessAgent(Process):
     def __init__(self, environment, id, prediction_q, training_q, episode_log_q):
@@ -51,6 +52,12 @@ class ProcessAgent(Process):
         # one frame at a time
         self.wait_q = Queue(maxsize=1)
         self.exit_flag = Value('i', 0)
+
+        if Config.LINEAR_DECAY_GREEDY_EPSILON_POLICY:
+            self.policy = LinearDecayGreedyEpsilonPolicy(self.num_actions,
+                                                         Config.EPSILON_START, 
+                                                         Config.EPSILON_END, 
+                                                         Config.DECAY_NUM_STEPS)
 
     @staticmethod
     def _accumulate_rewards(experiences, discount_factor, terminal_reward):
@@ -75,7 +82,9 @@ class ProcessAgent(Process):
         return p, v
 
     def select_action(self, prediction):
-        if Config.PLAY_MODE and Config.GREEDY_POLICY:
+        if Config.TRAIN_MODELS and Config.LINEAR_DECAY_GREEDY_EPSILON_POLICY:
+            action = self.policy.select_action(prediction)
+        elif Config.PLAY_MODE and Config.GREEDY_POLICY:
             action = np.argmax(prediction)
         else:
             action = np.random.choice(self.actions, p=prediction)

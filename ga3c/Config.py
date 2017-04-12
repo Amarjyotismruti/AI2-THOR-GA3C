@@ -132,6 +132,13 @@ class Config:
     NETWORK_NAME = 'network'
 
     #########################################################################
+    # Decay greedy epsilon policy
+    EPSILON_START = 1
+    EPSILON_END = 0.1
+    DECAY_NUM_STEPS = 200000
+    LINEAR_DECAY_GREEDY_EPSILON_POLICY = True
+
+    #########################################################################
     # More experimental parameters here
     
     # Minimum policy
