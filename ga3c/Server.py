@@ -34,20 +34,19 @@ from ga3c.ProcessStats import ProcessStats
 from ga3c.ThreadDynamicAdjustment import ThreadDynamicAdjustment
 from ga3c.ThreadPredictor import ThreadPredictor
 from ga3c.ThreadTrainer import ThreadTrainer
-
+from ga3c.network.Network import Network
+from ga3c.env.Environment import Environment
 
 class Server:
-    def __init__(self, network, environment):
+    def __init__(self):
         self.stats = ProcessStats()
 
         self.training_q = Queue(maxsize=Config.MAX_QUEUE_SIZE)
         self.prediction_q = Queue(maxsize=Config.MAX_QUEUE_SIZE)
 
-        self.model = network(Config.DEVICE, Config.NETWORK_NAME, environment().get_num_actions())
+        self.model = Network(Config.DEVICE, Config.NETWORK_NAME, Environment().get_num_actions())
         if Config.LOAD_CHECKPOINT:
             self.stats.episode_count.value = self.model.load()
-
-        self.environment = environment
 
         self.training_step = 0
         self.frame_counter = 0
@@ -59,7 +58,7 @@ class Server:
 
     def add_agent(self):
         self.agents.append(
-            ProcessAgent(self.environment, len(self.agents), self.prediction_q, self.training_q, self.stats.episode_log_q))
+            ProcessAgent(Environment, len(self.agents), self.prediction_q, self.training_q, self.stats.episode_log_q))
         self.agents[-1].start()
 
     def remove_agent(self):
@@ -107,8 +106,7 @@ class Server:
             for trainer in self.trainers:
                 trainer.enabled = False
 
-        learning_rate_multiplier = (
-                                       Config.LEARNING_RATE_END - Config.LEARNING_RATE_START) / Config.ANNEALING_EPISODE_COUNT
+        learning_rate_multiplier = (Config.LEARNING_RATE_END - Config.LEARNING_RATE_START) / Config.ANNEALING_EPISODE_COUNT
         beta_multiplier = (Config.BETA_END - Config.BETA_START) / Config.ANNEALING_EPISODE_COUNT
 
         while self.stats.episode_count.value < Config.EPISODES:

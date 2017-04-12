@@ -35,9 +35,8 @@ import scipy.misc as misc
 
 from ga3c.Config import Config
 from ga3c.GameManager import GameManager
-from ga3c.env.Environment import Environment
 
-class AtariEnvironment(Environment):
+class AtariEnvironment():
     def __init__(self):
         self.game = GameManager(Config.GAME, display=Config.PLAY_MODE)
         self.nb_frames = Config.STACKED_FRAMES

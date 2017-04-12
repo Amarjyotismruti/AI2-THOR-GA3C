@@ -1,17 +1,11 @@
-class Environment:
-    def __init__(self):
-        self.previous_state = None
-        self.current_state = None
-        pass
+from ga3c.Config import Config
+from ga3c.env.AtariEnvironment import AtariEnvironment
+from ga3c.env.CartPoleEnvironment import CartPoleEnvironment
 
-    def get_num_actions(self):
-        pass
-
-    def reset(self):
-        pass
-
-    def step(self, action):
-        pass
-
-    def start(self):
-        pass
+def Environment():
+    if 'atari' in Config.NETWORK_NAME:
+        return AtariEnvironment()
+    elif 'cartpole' in Config.NETWORK_NAME:
+        return CartPoleEnvironment()
+    else:
+        raise('Env does not exist.')

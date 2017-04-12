@@ -1,9 +1,8 @@
 from ga3c.Config import Config
 from ga3c.GameManager import GameManager
-from ga3c.env.Environment import Environment
 import numpy as np
 
-class CartPoleEnvironment(Environment):
+class CartPoleEnvironment():
     def __init__(self):
         self.game = GameManager(Config.GAME, display=Config.PLAY_MODE)
         self.previous_state = None

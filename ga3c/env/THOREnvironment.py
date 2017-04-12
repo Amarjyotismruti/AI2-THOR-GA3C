@@ -23,6 +23,8 @@ class THOREnvironment(Environment):
         self.previous_state = None
         self.current_state = None
 
+        self.reset()
+        
     def start(self):
         self.env_thor.start(start_unity=self.start_unity)
 
