@@ -10,5 +10,5 @@ def Environment():
 		return CartPoleEnvironment()
 	elif 'thor' in Config.NETWORK_NAME:
 		return THOREnvironment()
-    else:
-        raise('Env does not exist.')
+	else:
+		raise('Env does not exist.')
