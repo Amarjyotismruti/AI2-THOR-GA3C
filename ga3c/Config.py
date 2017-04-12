@@ -127,9 +127,7 @@ class Config:
     PRINT_STATS_FREQUENCY = 1
     # The window to average stats
     STAT_ROLLING_MEAN_WINDOW = 1000
-
-    # Results filename
-    RESULTS_FILENAME = 'results.txt'
+    
     # Network checkpoint name
     NETWORK_NAME = 'network'
 
