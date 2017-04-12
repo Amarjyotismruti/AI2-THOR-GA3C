@@ -34,8 +34,6 @@ import gym
 
 from ga3c.Config import Config
 from ga3c.Server import Server
-from ga3c.network.THORNetwork import THORNetwork
-from ga3c.env.THOREnvironment import THOREnvironment
 
 # Parse arguments
 for i in range(1, len(sys.argv)):
@@ -44,24 +42,32 @@ for i in range(1, len(sys.argv)):
     x, y = sys.argv[i].split('=')
     setattr(Config, x, type(getattr(Config, x))(y))
 
-Config.PLAY_MODE = False
-Config.AGENTS = 1
-Config.PREDICTORS = 1
-Config.TRAINERS = 1
-Config.DYNAMIC_SETTINGS = False
+Config.NETWORK_NAME = 'thor'
 
 Config.STACKED_FRAMES = 3
 Config.IMAGE_WIDTH = 224
 Config.IMAGE_HEIGHT = 224
 
-Config.GREEDY_POLICY = False
-Config.TMAX = 4
-Config.EPISODES = 3000
+if Config.TRAIN_MODELS:
+	Config.PLAY_MODE = False
+	Config.AGENTS = 8
 
-Config.TENSORBOARD = True
-Config.TENSORBOARD_UPDATE_FREQUENCY = 1000
+	Config.EPISODES = 200000
 
-gym.undo_logger_setup()
+	Config.TENSORBOARD = True
+	Config.TENSORBOARD_UPDATE_FREQUENCY = 100
+	Config.SAVE_FREQUENCY = 2500
 
-# Start main program
-Server(THORNetwork, THOREnvironment).main()
+	Config.GREEDY_POLICY = False
+	Config.LINEAR_DECAY_GREEDY_EPSILON_POLICY = False
+	Config.EPSILON_START = 1
+	Config.EPSILON_END = 0.1
+	Config.DECAY_NUM_STEPS = 400000
+
+	Config.LEARNING_RATE_START = 0.00001
+	Config.LEARNING_RATE_END = 0.00001
+
+	gym.undo_logger_setup()
+
+	# Start main program
+	Server().main()
